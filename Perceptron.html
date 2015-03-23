@@ -587,7 +587,7 @@ svg path{
 				//d3.select("svg1").append("p").attr("id","p2").text("Phase d'apprentissage").style("font-size", "17px");					
 				d3.select("svg2").append("p").text( "A chaque itération le perceptron calcule une nouvelle droite (affichée en vert), il calcule ensuite le taux d'erreur obtenu avec cette nouvelle droite. Le taux d'erreur correspond au rapport du nombre de points mal classés sur l'ensemble des points.");
 				d3.select("svg2").append("p").text( "Le perceptron choisit ensuite un point au hasard parmi les points qu'il a mal classés, ce point lui sert à s'orienter pour calculer d'une nouvelle droite. Si vous choisissez l'exécution pas à pas, ce point est identifiable sur le graphique, il est entouré d'un cercle gris. On observe aussi à l'exécution pas à pas que les points choisis par le Perceptron sont toujours soit des points rouges au dessus de la droite verte soit des points bleus en dessous de la droite verte.");
-				d3.select("svg2").append("p").text( "Si a répartition des points est trop dispropotionnée (Ex: seulement deux points bleus pour 48 points rouges), il se peut que le perceptron ne converge pas vers une solution à taux d'erreur nul mais oscille indéfiniment. On considèrera alors comme solution une droite pour laquelle le taux d'erreur est minimum.");
+				d3.select("svg2").append("p").text( "Si la répartition des points est trop dispropotionnée (Ex: seulement deux points bleus pour 48 points rouges), il se peut que le perceptron ne converge pas vers une solution à taux d'erreur nul mais oscille indéfiniment. On considèrera alors comme solution une droite pour laquelle le taux d'erreur est minimum.");
 				d3.select("svg2").append("p").text( "L'option -One Shot- lance l'apprentissage sans arrêt à chaque itération.");
 
 				
@@ -810,9 +810,9 @@ svg path{
 	}
 		
 		d3.select("svg0").append("p").text("Le Perceptron est l'algorithme le plus simple qui existe pour identifier une séparation entre deux groupes de points. C'est une brique de base de l'apprentissage automatique qui permet de créer d'autres modèles bien plus complexes comme les réseaux de neuronnes.");
-		d3.select("svg0").append("p").text("Pourquoi vouloir classer des groupes de points? Il y a beaucoup de cas d'usages dans lesquels il faut pouvoir identifier une donnée inconue à partir de caractéristiques connues mais très nombreuses et difficiles à exploiter rapidement. On peut vouloir par exemple détecter qu'un mail reçu est un spam ou qu'une transaction bancaire est frauduleuse. Ce type d'algorythme peut aussi servir à classer les demandeurs de crédits en profils plus ou moins avantageux pour la banque.");
+		d3.select("svg0").append("p").text("Pourquoi vouloir classer des groupes de points? Il y a beaucoup de cas d'usages dans lesquels il faut pouvoir identifier une donnée inconnue à partir de caractéristiques connues mais très nombreuses et difficiles à exploiter rapidement. On peut vouloir par exemple détecter qu'un mail reçu est un spam ou qu'une transaction bancaire est frauduleuse. Ce type d'algorythme peut aussi servir à classer les demandeurs de crédits en profils plus ou moins avantageux pour la banque.");
 		d3.select("svg0").append("p").text("Le Perceptron demande une phase d'apprentissage avec des données acquises dont on connait le groupe d'appartenance. Lorsque le Perceptron a appris à définir une séparation entre deux groupes, il peut alors prédire le groupe d'appartenance de nouveaux points.");
-		d3.select("svg0").append("p").text("L'application ci dessous permet de visualiser les étapes de mise en fonctionnement du Perceptron et de tester la capacité de prédiction en phase opérationnelle.");
+		d3.select("svg0").append("p").text("L'application ci-dessous permet de visualiser les étapes de mise en fonctionnement du Perceptron et de tester la capacité de prédiction en phase opérationnelle.");
 		d3.select("svg0").append("p").text("Le mode pas à pas laisse la main à l'utilisateur pour déclencher une itération d'apprentissage alos que le mode -One Shot- lance automatiquement cette etape.");
 		d3.select("svg0").append("p").text("A vous de jouer!");
 	
