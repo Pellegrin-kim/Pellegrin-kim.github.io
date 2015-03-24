@@ -560,6 +560,7 @@ svg path{
 				Xn[i][1] = bubbleChart[i][1];
 				Xn[i][2] = Math.sign( Xn[i][1] - slope*Xn[i][0] - lineoffset) // On assigne a chaque point la valeur +1 si pour ce point y-aX-b >=0 et on assigne -1 si cette valeur est <0					
 			}
+			d3.select("svg2").append("p").text("test2");	
 			
 			var tb2 = d3.selectAll("circle").data(Xn); // selection des cercles et lien avec le tableau de valeurs Xn
 			tb2.style("stroke", "black");
@@ -573,6 +574,7 @@ svg path{
 			tb2.attr("r", 3);
 			tb2.attr("cx", function(d) { return d[0]; });
 			tb2.attr("cy", function(d) { return d[1]; });
+			d3.select("svg2").append("p").text("test3");	
 			
 			d3.selectAll("#btn3").remove();				
 			//d3.select("#btn3").remove(); //suppression du bouton d'etiquetage des points
@@ -580,7 +582,10 @@ svg path{
 			Wo_init();
 			d3.select("#p1").remove();	//suppression du texte "Preparation du jeu de donneés"
 			d3.select("svg2").append("h4").attr("id","p6").text("Phase d'apprentissage").style("font-size", "17px");	
+			d3.select("svg2").append("p").text("test4");	
 			if(Ok_pour_perceptron == "OK"){
+				d3.select("svg2").append("p").text("test5");	
+
 				d3.select("#p1").remove();
 				//d3.select("svg1").append("p").attr("id","p2").text("Phase d'apprentissage").style("font-size", "17px");					
 				d3.select("svg2").append("p").text( "A chaque itération le perceptron calcule une nouvelle droite (affichée en vert), il calcule ensuite le taux d'erreur obtenu avec cette nouvelle droite. Le taux d'erreur correspond au rapport du nombre de points mal classés sur l'ensemble des points.");
