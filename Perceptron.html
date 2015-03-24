@@ -257,6 +257,27 @@ svg path{
 	var Costdataset = [];
 	var MaxIT = 200;
 
+	function Math_sign(ValeurASigner){
+	
+		if (ValeurASigner == 0){
+			
+			return 0;
+			
+			}
+		else{
+			if(ValeurASigner > 0){
+			return 1;
+			}
+			else{
+			return -1;
+			}
+		
+		}
+	
+	
+	
+	
+	}
 
 	function affichage_cout(){
 		
@@ -378,7 +399,7 @@ svg path{
 	}
 	
 	function LabelisePoints(){	
-		for (var i = 0; i < numPoints; i++) {Yn_w[i]  = Math.sign((W[IT][0]*1+(W[IT][1]*(Xn[i][0]-200))+(W[IT][2]*(Xn[i][1]-200))));
+		for (var i = 0; i < numPoints; i++) {Yn_w[i]  = Math_sign((W[IT][0]*1+(W[IT][1]*(Xn[i][0]-200))+(W[IT][2]*(Xn[i][1]-200))));
 			//on pose Xo egal à 1,les -200 correspondent au changement de reperes, les calcul sont dans le repère dont 0 est l'origine, au milieu du carré. sur le graphique le carré a pour origine sont coin en haut à gauche
 		}		
 	}
@@ -558,7 +579,7 @@ svg path{
 			for (var i = 0; i < numPoints; i++) {
 				Xn[i][0] = bubbleChart[i][0];
 				Xn[i][1] = bubbleChart[i][1];
-				Xn[i][2] = Math.sign( Xn[i][1] - slope*Xn[i][0] - lineoffset) // On assigne a chaque point la valeur +1 si pour ce point y-aX-b >=0 et on assigne -1 si cette valeur est <0					
+				Xn[i][2] = Math_sign( Xn[i][1] - slope*Xn[i][0] - lineoffset) // On assigne a chaque point la valeur +1 si pour ce point y-aX-b >=0 et on assigne -1 si cette valeur est <0					
 			}
 			d3.select("svg2").append("p").text("test2");	
 			
@@ -830,19 +851,17 @@ svg path{
 			//userAgent in IE7 WinXP returns: Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; .NET CLR 2.0.50727)
 			//userAgent in IE11 Win7 returns: Mozilla/5.0 (Windows NT 6.3; Trident/7.0; rv:11.0) like Gecko
 
-			if (navigator.userAgent.indexOf('MSIE') != -1)
-				var detectIEregexp = /MSIE (\d+\.\d+);/ //test for MSIE x.x
-			else // if no "MSIE" string in userAgent
-				var detectIEregexp = /Trident.*rv[ :]*(\d+\.\d+)/ //test for rv:x.x or rv x.x where Trident string exists
+			//if (navigator.userAgent.indexOf('MSIE') != -1)
+				//var detectIEregexp = /MSIE (\d+\.\d+);/ //test for MSIE x.x
+			//else // if no "MSIE" string in userAgent
+			//	var detectIEregexp = /Trident.*rv[ :]*(\d+\.\d+)/ //test for rv:x.x or rv x.x where Trident string exists
 
-			if (detectIEregexp.test(navigator.userAgent)){ //if some form of IE
-				d3.select("svg12").append("h4").attr("id","p1").text("You use Internet Explorer, you're in bad luck ... try a modern web browser like Chrome or Fire Fox.").style("font-size", "17px").style("color","Blue");
-				d3.selectAll("button").remove();
-				d3.selectAll("rect").remove();
-			}
-			else{
-				//document.write("n/a")
-			}
+			//if (detectIEregexp.test(navigator.userAgent)){ //if some form of IE
+				//d3.select("svg12").append("h4").attr("id","p1").text("You use Internet Explorer, you're in bad luck ... try a modern web browser like Chrome or Fire Fox.").style("font-size", "17px").style("color","Blue");
+				//d3.selectAll("button").remove();
+				//d3.selectAll("rect").remove();
+			//}
+		
 	
 
     </script>
