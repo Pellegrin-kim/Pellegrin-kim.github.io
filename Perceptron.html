@@ -4,6 +4,12 @@
 <head>
     <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
 <style>
+.area {
+    fill: deepskyblue;
+    stroke-width: 0;
+	opacity: 0.2;
+}
+
 #introduction {
   position: relative;
   width: 900px;
@@ -34,10 +40,9 @@
   text-align: justify;
   line-height:18px;
 }
-
 #lancement {
   position: relative;
-  width: 950px;
+  width: 900px;
   margin-top= 40px;
   margin-bottom = 10px;
 }
@@ -59,11 +64,6 @@
   color: Black;
   text-align: justify;
   line-height:15px;
-}
-path { 
-	stroke: blue;
-	stroke-width: 1;
-	fill: none;
 }
 .axis path,
 .axis line {
@@ -125,6 +125,11 @@ path {
   text-align: justify;
   line-height:15px;
 }
+svg12{
+  opacity: 1;
+  width: 900px;
+  height: 20px;
+} 
 #zone13 {
   position: relative;
   width: 900px;
@@ -133,25 +138,14 @@ path {
 #viz {
   position: relative;
   margin-top = 20px;
-  width: 1160px;
-  height: 420px;
+  width: 400px;
+  height: 400px;
 }
 #zone2 {
   position: relative;
   width: 900px;
+  height: 50px;
 }
-
-svg12 path{
-  stroke: #000;
-  stroke-width: 1px;
-  stroke: rgba(0,0,0,0.2);
-} 
- 
-svg path{
-  stroke: lightblue;
-  stroke-width: 1px;
-}
-  
 #zone2 h4 {
   margin-top:1em;
   margin-bottom: 0.5em;
@@ -171,6 +165,8 @@ svg path{
   text-align: justify;
   line-height:15px;
 }
+
+
   
 </style>
 
@@ -274,9 +270,6 @@ svg path{
 		
 		}
 	
-	
-	
-	
 	}
 
 	function affichage_cout(){
@@ -342,8 +335,8 @@ svg path{
 			.attr("d", lineFunction(Costdataset))
 			.attr("transform", "translate("+ Decalage_right_courbeCout + ",0)")
             .attr("stroke", "lightblue")
-			.attr("opacity", 5)
-            .attr("stroke-width", 2)
+			.attr("opacity", 1)
+            .attr("stroke-width", 1)
             .attr("fill", "none");		  
 			
 		d3.select("svg").append("text").attr("fill", "red").attr("id","p5").text("Taux d'erreur minimum: ").attr("font-size", "15px").attr("transform", "translate("+ (Decalage_right_courbeCout+150) + ","+(hx +100)+")");
@@ -354,7 +347,7 @@ svg path{
 	function Perceptron_Pasapas() {		
 		if (IT == 0){d3.select("#btn_perpOS").remove();} //on supprime le bouton de choix Perceptron One Shot
 		
-		drawperceptronline("svg",W,"darkgreen", 0.5);
+		drawperceptronline(W,"darkgreen", 1);
 		//d3.select("svg2").append("p").text( "Pour IT = " +IT+ "  " +"les coordonnees de W sont  "+W[IT][0] + "    "+W[IT][1] + "  "+W[IT][2]);		
 		//for (var i = 0; i < numPoints; i++) {d3.select("svg2").append("p").text( "les labels des points sont "+Xn[i][2]);}
 		LabelisePoints();
@@ -372,7 +365,7 @@ svg path{
 			var lineOffsetfinal = -W[IT][0]/W[IT][2];
 			slope_finale = slope_finale.toFixed(2);
 			lineOffsetfinal = lineOffsetfinal.toFixed(2);
-			drawperceptronline("svg",W,"orange",4, 5);
+			drawperceptronline(W,"orange",4, 5);
 			d3.select("svg2").append("p").text( "Le perceptron a trouvé une solution pour classer les points. ").style("color","red");
 			d3.select("#btn_perpIT").remove();	
 			d3.select("svg12").append("p").text("Fin de l'apprentissage - La droite identifiée est en orange sur le graphique").style("color","red");	
@@ -418,8 +411,7 @@ svg path{
 			TabWcostmin = [W[IT][0],W[IT][1],W[IT][2]];
 			d3.select("#p5").text("Taux d'erreur minimum: " + Wcostmin );
 		}
-		
-		
+				
 		return Wcost;
 	}
 	
@@ -475,7 +467,7 @@ svg path{
 		
 		for(var i=0;i<MaxIT;i++){
 			IT = i;
-			drawperceptronline("svg",W,"darkgreen", 0.5);
+			drawperceptronline(W,"darkgreen", 0.5);
 			LabelisePoints();
 			Wcost = CalculateAddnewCost(Yn_w);
 			affichage_cout();
@@ -489,8 +481,8 @@ svg path{
 				var lineOffsetfinal = -W[IT][0]/W[IT][2];
 				slope_finale = slope_finale.toFixed(2);
 				lineOffsetfinal = lineOffsetfinal.toFixed(2);
-				drawperceptronline("svg",W,"orange",4, 5);
-				d3.select("svg2").append("p").text( "Le perceptron a trouvé une solution pour classer les points. C'est la droite de pente "+slope_finale+" et d'offset Yo = "+ lineOffsetfinal).style("color","red");
+				drawperceptronline(W,"orange",4, 5);
+				d3.select("svg2").append("p").text( "Le perceptron a trouvé une solution pour classer les points. C'est la droite de pente -"+slope_finale+" et d'offset Yo = "+ lineOffsetfinal).style("color","red");
 				d3.select("svg12").append("p").text("Fin de l'apprentissage - La droite identifiée est en orange sur le graphique").style("color","red");	
 				d3.select("#p2").remove(); //Suppression paragraphe - Phase apprentissage
 				d3.select("#btn_perpOS").remove();
@@ -506,7 +498,7 @@ svg path{
 				d3.select("svg2").append("p").text( "Le perceptron a effectué 200 itérations , la meilleure solution est la droite affichée en orange , elle est associée à un taux d'erreur de: "+Wcostmin);
 				d3.select("#p2").remove(); //Suppression paragraphe - Phase apprentissage
 				//d3.select("svg2").append("p").text("la valeut de TabWcostmin[0][1]  est:  "+ TabWcostmin[0][1] +" et celle de est W[IT_int][2]"+ W_int[IT_int][2]);	
-				drawperceptronline_finalErrorRate("svg",TabWcostmin,"orange",4, 5); // il faut ajouter un argument dans cette fonction pour le cas ou le W choisi n'est identifiable par l'IT en cours comme ici où on revient dans le passé
+				drawperceptronline_finalErrorRate(TabWcostmin,"orange",4, 5); // il faut ajouter un argument dans cette fonction pour le cas ou le W choisi n'est identifiable par l'IT en cours comme ici où on revient dans le passé
 				d3.select("svg0").append("button")
 					.attr("id","btn0")
 					.attr("value","PLAY")
@@ -517,50 +509,179 @@ svg path{
 		
 		}
 	}
-	function drawperceptronline_finalErrorRate(svg,TabWcostmin,linecolor,strokewidth, opacity){		
+	
+	function lineAdjustToSVG(slopeW, lineoffsetW){
+		var tabl = [];
+		var x1 = 0;
+		var y1 = 0;
+		var x2 = 0;
+		var y2 = 0;
+		var x3 = 0;
+		var y3 = 0;
+		
+		x1 = -200;
+		y1 = x1*slopeW + lineoffsetW;
+		if(y1<-200){
+			y1 = -200;
+			x1 = (y1-lineoffsetW)/slopeW;
+			if(slopeW >= 0){				
+				if(x1 <= 200){
+					y2 = 200;
+					x2 = (y2-lineoffsetW)/slopeW;
+					if (x2 <= 200){
+						x3 = x2;
+						y3 = y2;
+					}
+					else{ //x2 > 200
+						x2 = 200;
+						y2 = x2*slopeW + lineoffsetW;
+						x3 = x2;
+						y3 = y2;				
+					}
+				}
+				else{ //x1 > 200
+					// la droite ne passe pas dans le cadre
+					x1 = -200;
+					y1 = -200;
+					x2 = -200;
+					y2 = -200;
+					x3 = -200;
+					y3 = -200;
+				}
+				
+			}
+			else{
+				// la droite ne passe pas dans le cadre
+					x1 = -200;
+					y1 = -200;
+					x2 = -200;
+					y2 = -200;
+					x3 = -200;
+					y3 = -200;
+				}							
+		}
+		if((y1>=-200)&&(y1<=200)){
+			if(slopeW >= 0){
+				y2 = 200;
+				x2 = (y2-lineoffsetW)/slopeW;
+				if (x2 <= 200){
+					x3 = x2;
+					y3 = y2;
+				}
+				else{// x2 > 200
+					x2 = 200;
+					y2 = x2*slopeW + lineoffsetW;
+					x3 = x2;
+					y3 = y2;
+				}
+			}
+			else{
+				y2 = -200;
+				x2 = (y2-lineoffsetW)/slopeW;
+				if (x2 <= 200){
+					x3 = x2;
+					y3 = y2;
+				}
+				else{//x2>200
+					x2 = 200;
+					y2 = x2*slopeW + lineoffsetW;
+					x3 = x2;
+					y3 = y2;
+				}
+			}				
+		}		
+		if(y1>200){
+			y1 = 200;
+			x1 = (y1-lineoffsetW)/slopeW;				
+				
+			if(slopeW >= 0){
+				// la droite ne passe pas dans le cadre
+				y1 = 200;
+				x1 = 200;
+				x2 = 200;
+				y2 = 200;
+				x3 = 200;
+				y3 = 200;								
+			}
+			else{ // pente negative
+				if (x1 <= 200){
+					x2 = 200;
+					y2 = x2*slopeW + lineoffsetW;
+					if (y2 <-200){
+						y2 = -200;
+						x2 = (y2-lineoffsetW)/slopeW;
+						x3 = x2;
+						y3 = y2;
+					}
+					else{
+						x3 = 200;
+						y3 = -200;						
+					}
+				}
+				else{ //x1 > 200
+					x2 = 200;
+					y2 = 200;
+					x3 = 200;
+					y3 = 200;	
+				}
+			}		
+		}
+		tabl[0] = x1;
+		tabl[1] = y1;
+		tabl[2] = x2;
+		tabl[3] = y2;
+		tabl[4] = x3;
+		tabl[5] = y3;
+		
+		return tabl;
+	}
+	function drawperceptronline_finalErrorRate(TabWcostmin,linecolor,strokewidth, opacity){		
 		//d3.select("svg2").append("p").text("la valeut de TabWcostmin[1]  est:  "+ TabWcostmin[1] +" et celle de estTabWcostmin[2]"+ TabWcostmin[2]);		
 		slopeW = -1*(TabWcostmin[1]/TabWcostmin[2]); 
 		lineoffsetW = -1*(TabWcostmin[0]/TabWcostmin[2]); 
 		//W et x y sont ici exprimes dans un repère centré sur l'origine
-		var x1 = -200;
-		var y1 = x1*slopeW + lineoffsetW;
-		var x2 = 200 ;
-		var y2 = x2*slopeW + lineoffsetW;
+		var tableau=[];
+		tableau = lineAdjustToSVG(slopeW,lineoffsetW);
+		var TabDataSet = [[tableau[0],tableau[1]], [tableau[2],tableau[3]], [tableau[4],tableau[5]],];
 		
-		// Attention: changement de repère pour l'affichage
-		d3.select(svg)
-			.append('line')
-			.attr({ x1:x1+200, y1:y1+200, x2: x2+200, y2: y2+200 })
+		var pathFunction = d3.svg.line()
+                          .x(function(d) { return (d[0]+200); })
+                          .y(function(d) { return (d[1]+200); });		  
+		
+
+		svg.append("path")
+			.attr("d", pathFunction(TabDataSet))
+            .attr("stroke", linecolor)
 			.attr("opacity", opacity)
-			.style("stroke", linecolor)
-			.style("stroke-width", strokewidth);
-		//d3.select("svg2").append("p").text("La pente de la droite trouvee par le perceptron est   "+ slopeW +" la valeur d'offset Yo est "+ lineoffsetW);				
-		//d3.select("svg2").append("p").text("Les points dans repere d'affichage de la droite trouvee    "+ x1+250 +" "+ y1+250 +"        "+ x2+250 + " " + y2+250);
-			
+            .attr("stroke-width", strokewidth)
+            .attr("fill", "none");		
 	}
 	
 	
-	function drawperceptronline(svg,W,linecolor,strokewidth, opacity){	
+	function drawperceptronline(W,linecolor,strokewidth, opacity){	
 		
 		//d3.select("svg2").append("p").text("la valeut de IT_int est:  "+ IT_int);		
 		//d3.select("svg2").append("p").text("la valeut de W[IT_int][1]  est:  "+ W_int[IT_int][1] +" et celle de est W[IT_int][2]"+ W_int[IT_int][2]);		
 		slopeW = -1*(W[IT][1]/W[IT][2]); 
 		lineoffsetW = -1*(W[IT][0]/W[IT][2]); 
 		//W et x y sont ici exprimes dans un repère centré sur l'origine
-		var x1 = -200;
-		var y1 = x1*slopeW + lineoffsetW;
-		var x2 = 200 ;
-		var y2 = x2*slopeW + lineoffsetW;
 		
-		// Attention: changement de repère pour l'affichage
-		d3.select(svg)
-			.append('line')
-			.attr({ x1:x1+200, y1:y1+200, x2: x2+200, y2: y2+200 })
+		var tableau=[];
+		tableau = lineAdjustToSVG(slopeW,lineoffsetW);		
+		var TabDataSet = [[tableau[0],tableau[1]], [tableau[2],tableau[3]], [tableau[4],tableau[5]],];
+		
+		var pathFunction = d3.svg.line()
+                          .x(function(d) { return (d[0]+200); })
+                          .y(function(d) { return (d[1]+200); })
+						  .interpolate("linear");	  		
+					 		
+		svg.append("path")
+			.attr("d", pathFunction(TabDataSet))
+            .attr("stroke", linecolor)
 			.attr("opacity", opacity)
-			.style("stroke", linecolor)
-			.style("stroke-width", strokewidth);
-		//d3.select("svg2").append("p").text("La pente de la droite trouvee par le perceptron est   "+ slopeW +" la valeur d'offset Yo est "+ lineoffsetW);				
-		//d3.select("svg2").append("p").text("Les points dans repere d'affichage de la droite trouvee    "+ x1+250 +" "+ y1+250 +"        "+ x2+250 + " " + y2+250);	
+            .attr("stroke-width", strokewidth)
+            .attr("fill", "none");		  
+		
 	}
 	
 	function Create2DArray(rows) {
@@ -711,22 +832,52 @@ svg path{
 		lineoffset = getRandomInt(50,250);
 		var x1 = 0;
 		var y1 = x1*slope + lineoffset;
-		var x2 = 400;
-		var y2 = x2*slope + lineoffset;
+		if(slope > 0){
+			var y2 = 400;
+			var x2 = (y2-lineoffset)/slope;
+			if (x2 < 400){
+					var x3 = 400;
+					var y3 = 400;
+			}
+			else{
+			   //semble ne pas etre à traiter car area limitée en largeur par svg (mais pas en hauteur sur IE ....)
+			}
+		}
+		else{
+				var y2 = 0;
+				var x2 = (y2-lineoffset)/slope;
+				if (x2 < 400){
+					var x3 = 400;
+					var y3 = 0;
+				}
+				else{
+					//semble ne pas etre à traiter car area limitée en largeur par svg (mais pas en hauteur sur IE ....)
+				}
+		}
 
 		
 		//var datasetpoints = [[x1, y1, x2, y2]];
-		var datasetpoints2 = [[x1,y1], [x2,y2],];
-						
-		svg.selectAll("path.area")
-			.data([datasetpoints2])      
-		.enter().append("path")
-		.style("fill", "deepskyblue")
-		.attr("opacity", 0.4)
-		.attr("stroke", "black")
-        .attr("stroke-width", 1)
-		.attr("class", "area") 
-		.attr("d", d3.svg.area());
+		var datasetpoints2 = [[x1,y1], [x2,y2], [x3,y3],];
+		
+		var area = d3.svg.area()
+			.x(function(d) { return d[0]; })
+			.y0(0)
+			.y1(function(d) { return d[1]; });
+			
+		svg.append("path")
+			.datum(datasetpoints2)
+			.attr("class", "area")
+			.attr("d", area);
+				
+		//svg.selectAll("path.area")
+			//.data([datasetpoints2])      
+		//.enter().append("path")
+		//.style("fill", "deepskyblue")
+		//.attr("opacity", 0.4)
+		//.attr("stroke", "black")
+        //.attr("stroke-width", 1)
+		//.attr("class", "area") 
+		//.attr("d", d3.svg.area());
 	};	 
 	
 	function Lancer_Perceptron(){
