@@ -138,7 +138,7 @@ svg12{
 #viz {
   position: relative;
   margin-top = 20px;
-  width: 400px;
+  width: 1160px;
   height: 400px;
 }
 #zone2 {
@@ -560,7 +560,7 @@ svg12{
 					y3 = -200;
 				}							
 		}
-		if((y1>=-200)&&(y1<=200)){
+		if((y1>-200)&&(y1<200)){
 			if(slopeW >= 0){
 				y2 = 200;
 				x2 = (y2-lineoffsetW)/slopeW;
@@ -607,18 +607,20 @@ svg12{
 				if (x1 <= 200){
 					x2 = 200;
 					y2 = x2*slopeW + lineoffsetW;
-					if (y2 <-200){
+					if (y2 <=-200){
 						y2 = -200;
 						x2 = (y2-lineoffsetW)/slopeW;
 						x3 = x2;
 						y3 = y2;
 					}
-					else{
-						x3 = 200;
-						y3 = -200;						
+					else{//y2>-200
+						x3 = x2;
+						y3 = y2;							
 					}
 				}
 				else{ //x1 > 200
+					y1 = 200;
+					x1 = 200;
 					x2 = 200;
 					y2 = 200;
 					x3 = 200;
@@ -632,7 +634,12 @@ svg12{
 		tabl[3] = y2;
 		tabl[4] = x3;
 		tabl[5] = y3;
-		
+		if(y2<-200){
+		d3.select("svg2").append("p").text("les coord de M1 sont: "+x1+", "+y1);
+		d3.select("svg2").append("p").text("Les coord de M2 sont: "+x2+", "+y2);	
+		d3.select("svg2").append("p").text("Les coord de M3 sont: "+x3+", "+y3);			
+		d3.select("svg2").append("p").text("les pentes et offset sont: "+slopeW+", "+lineoffsetW);
+		}
 		return tabl;
 	}
 	function drawperceptronline_finalErrorRate(TabWcostmin,linecolor,strokewidth, opacity){		
