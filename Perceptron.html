@@ -160,7 +160,7 @@ svg12{
 #zone2 {
   position: relative;
   width: 900px;
-  height: 800px;
+  height: 260px;
 }
 #zone2 h4 {
   margin-top:3em;
@@ -182,6 +182,30 @@ svg12{
   line-height:18px;
 }
 
+#zone3 {
+  position: relative;
+  width: 900px;
+  height: 800px;
+}
+#zone3 h4 {
+  margin-top:3em;
+  margin-bottom: 1.5em;
+  font-family: 'Architects Daughter', 'Helvetica Neue', Helvetica, Arial, serif;
+  font-size: 15px;
+  font-weight: bold;
+  color: #474747;
+  text-indent: 3px;
+}
+#zone3 p,text {
+  margin-top:0.5em;
+  margin-bottom: 0.5em;
+  margin-left: 4px;
+  font-family: 'Architects Daughter', 'Helvetica Neue', Helvetica, Arial, serif;
+  font-size: 13px;
+  color: Black;
+  text-align: justify;
+  line-height:18px;
+}
 </style>
 
 </head>
@@ -988,12 +1012,16 @@ svg12{
 
 		if ((blackpoint_ordonnee == "OK")&&(blackpoint_abscisse=="OK")){
 			d3.selectAll("path").remove();
-			d3.selectAll("text").remove();
 			d3.select("#p_a5").remove();
 			d3.select("#p_p4").remove();
 			d3.selectAll("line").remove();
+			d3.selectAll("text").remove();
 			d3.select("#Badpointcircle").remove();
 			drawperceptronline_finalErrorRate(TabWcostmin,"orange",4, 5);
+			d3.select('#zone2').append("text").attr("id","p_t4").style("font-family","Arial").style("font-size","13px").text("Lorsque vous avez validé ");		
+			d3.select('#zone2').append("text").attr("id","p_t5").style("font-family","Arial").style("font-size","13px").style("font-weight","bold").text("les deux coordonnées");		
+			d3.select('#zone2').append("text").attr("id","p_t6").style("font-family","Arial").style("font-size","13px").text(", le point que vous avez choisi apparaît en noir sur le graphique. N'hésitez pas à faire plusieurs essais.");		
+
 			d3.selectAll("#blkpt").remove();
 			d3.selectAll("svg")
 				.append("circle")
@@ -1017,10 +1045,12 @@ svg12{
 		var y_pt = Point_y - 200;
 		if(y_pt> (x_pt*slopeW+lineoffsetW)){
 			var couleur_label = "rouge";
+			d3.selectAll("#p_final").remove();
 			d3.select("#zone2").append("p").attr("id","p_final").text("Le point de coordonnées x = "+Point_x+" et y = "+Point_y+" appartient au groupe "+ couleur_label+".").style("color","red");		
 		}
 		else{
 			var couleur_label = "bleu";
+			d3.selectAll("#p_final").remove();
 			d3.select("#zone2").append("p").attr("id","p_final").text("Le point de coordonnées x = "+Point_x+" et y = "+Point_y+" appartient au groupe "+ couleur_label+".").style("color", "blue");		
 		}
 		
@@ -1055,9 +1085,15 @@ svg12{
 		d3.select("#p_f1").remove();
 		d3.select("#p_f2").remove();
 		d3.select("#p_f3").remove();
+		d3.select("#p_f5").remove();
 		d3.select("#p_t4").remove();
 		d3.select("#p_t5").remove();
 		d3.select("#p_t6").remove();
+		d3.select("#p31").remove();
+		d3.select("#p32").remove();
+		d3.select("#p33").remove();
+		d3.select("#p34").remove();
+		d3.select("#p35").remove();
 		d3.selectAll("#p_final").remove();
 		d3.select("#p5").remove();
 		d3.selectAll("h4").remove();
@@ -1175,18 +1211,26 @@ svg12{
 		d3.select('#zone2').append("p").attr("id","p_f1").style("font-family","Arial").style("font-size","13px").text("Lorsque vous saisissez les coordonnées d'un nouveau point, le perceptron est capable d'identifier son groupe d'appartenance.");	
 		d3.select('#zone2').append("p").attr("id","p_f2").style("font-family","Arial").style("font-size","13px").text("L'axe des abscisses est de la gauche vers la droite sur le graphique.");	
 		d3.select('#zone2').append("p").attr("id","p_f3").style("font-family","Arial").style("font-size","13px").text("L'axe des ordonnées est du haut vers le bas sur le graphique.");
-		d3.select('#zone2').append("text").attr("id","p_t4").style("font-family","Arial").style("font-size","13px").text("Lorsque vous avez validé ");		
-		d3.select('#zone2').append("text").attr("id","p_t5").style("font-family","Arial").style("font-size","13px").style("font-weight","bold").text("les deux coordonnées");		
-		d3.select('#zone2').append("text").attr("id","p_t6").style("font-family","Arial").style("font-size","13px").text(", le point que vous avez choisi apparaît en noir sur le graphique. N'hésitez pas à faire plusieurs essais.");		
-		
+			
 		var node2 = document.createElement('div'); 
 		node2.innerHTML = '<br /><label for="abscisse" style="display: inline-block; width:250px; text-align: left; font-size: 13px; font-family: Arial; margin-left: 4px">  Choisir une abscisse entre 0 et 400: </label><input type="number" min="0" max="400" step="10" value="50" id="abscisse"><input value="valider" type="button"  onClick="add_abscisse()" id="buttonChoixAbscisse">'+
 		'<br /><br /><label for="ordonnée" style="display: inline-block; width:250px; text-align: left; font-size: 13px; font-family: Arial; margin-left: 4px">  Choisir une ordonnée entre 0 et 400: </label><input type="number" min="0" max="400" step="10" value="50" id="ordonnée"><input value="valider" type="button"  onClick="add_ordonnée()" id="buttonChoixOrdonnée"><br /><br />';	
 		document.getElementById('zone2').appendChild(node2);
-		d3.select('#zone2').append("p").attr("id","p_f5").style("font-family","Arial").style("font-size","13px").text("Cet exercice peut sembler trivial en deux dimensions mais il faut savoir que dans les cas réels les points ont bien plus que deux ou trois coordonnées, les enregistrements peuvent avoir des milliers d'attributs. Or le Perceptron s'adapte très facilement aux espaces de dimension n, n pouvant être très grand. Le sous espace de séparation n'est alors plus une droite mais un hyperplan de dimension n-1. Ce qui n'est plus représentable pour l'homme mais n'est pas plus compliqué pour l'algorithme.");		
+		
+		d3.select('#zone2').append("text").attr("id","p_t4").style("font-family","Arial").style("font-size","13px").text("Lorsque vous avez validé ");		
+		d3.select('#zone2').append("text").attr("id","p_t5").style("font-family","Arial").style("font-size","13px").style("font-weight","bold").text("les deux coordonnées");		
+		d3.select('#zone2').append("text").attr("id","p_t6").style("font-family","Arial").style("font-size","13px").text(", le point que vous avez choisi apparaît en noir sur le graphique. N'hésitez pas à faire plusieurs essais.");		
+
+		
+		d3.select('#zone3').append("p").attr("id","p_f5").style("font-family","Arial").style("font-size","13px").text("Cet exercice peut sembler trivial en deux dimensions mais il faut savoir que dans les cas réels les points ont bien plus que deux ou trois coordonnées, les enregistrements peuvent avoir des milliers d'attributs. Or le Perceptron s'adapte très facilement aux espaces de dimension n, n pouvant être très grand. Le sous espace de séparation n'est alors plus une droite mais un hyperplan de dimension n-1. Ce qui n'est plus représentable pour l'homme mais n'est pas plus compliqué pour l'algorithme.");		
 	
-	
-	}
+		d3.select('#zone3').append("h4").text("Les points forts et les points faibles du Perceptron").style("font-size", "17px");					
+		d3.select('#zone3').append("p").attr("id","p31").style("font-family","Arial").style("font-size","13px").text("Une première remarque valable pour tout algorithme d'apprentissage automatique: L'algorithme ne peut révéler une structure dans des données que s'il en existe une, cela suppose une organisation intrinsèque des données, ce qui n'est pas toujours le cas.");	
+		d3.select('#zone3').append("p").attr("id","p32").style("font-family","Arial").style("font-size","13px").text("Le perceptron a pour point fort sa simplicité, il permet d'identifier rapidement une organisation dans les données et peut s'implémenter par ajout de nouveaux enregistrements au fil de l'eau, sa performance s'améliorera alors au fur et à mesure de l'acquisition des données. On réalise bien sur le graphique qu'avec peu de points la séparation identifiée ne s'approche que grossièrement de la séparation réelle entre les points.");	
+		d3.select('#zone3').append("p").attr("id","p33").style("font-family","Arial").style("font-size","13px").text("Le perceptron a pour point faible sa simplicité aussi! Lorsque l'espace de séparation des données n'est pas linéaire (hyperplan), on utilisera des algorithmes plus sohistiqués qui sauront mieux épouser la forme des séparations entre les données.");
+		d3.select('#zone3').append("p").attr("id","p34").style("font-family","Arial").style("font-size","13px").text("Pour optimiser la solution dans l'espace de séparation des données, il existe des algorithmes plus sophistiqués comme le SVM (Machine à Vecteur de Support).");	
+		d3.select('#zone3').append("p").attr("id","p35").style("font-family","Arial").style("font-size","13px").text("Enfin, le Perceptron est un algorithme d'apprentissage supervisé, c'est à dire qu'il a besoin d'un historique de données labelisées pour apprendre. Ce qui n'est pas toujours facile à obtenir quand ce n'est pas impossible. Dans ce cas, il existe là aussi d'autres outils dits d'apprentissage non supervisés.");
+		}
 	
 	Lancer_Perceptron();
 		
