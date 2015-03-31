@@ -171,7 +171,7 @@ svg12{
   color: #474747;
   text-indent: 3px;
 }
-#zone2 p {
+#zone2 p,text {
   margin-top:0.5em;
   margin-bottom: 0.5em;
   margin-left: 4px;
@@ -189,9 +189,12 @@ svg12{
 <div id="pad"></div>
 <div id="lancement">
 <p>Le Perceptron est l'algorithme le plus simple qui existe pour identifier une séparation entre deux groupes de points. C'est une brique de base de l'apprentissage automatique qui permet de créer d'autres modèles bien plus complexes comme les réseaux de neuronnes.
-<br />Pourquoi vouloir classer des groupes de points? Il y a beaucoup de cas d'usages dans lesquels il faut pouvoir identifier une donnée inconnue à partir de caractéristiques connues mais très nombreuses et difficiles à exploiter rapidement. On peut vouloir par exemple détecter qu'un mail reçu est un spam ou qu'une transaction bancaire est frauduleuse. Ce type d'algorithme peut aussi servir à classer les demandeurs de crédits en profils plus ou moins avantageux pour l'organisme de crédit.
-<br />Le Perceptron a besoin d'une phase d'apprentissage à l'aide d'enregistements de données dont il connaît le groupe d'appartenance (spam ou pas spam, frauduleux ou normal, avantageux ou désaventageux). Lorsque le Perceptron a appris à définir une séparation entre deux groupes, il peut alors prédire le groupe d'appartenance de tout nouvel enregistrement.
-<br />L'application ci-dessous permet de visualiser les étapes de mise en fonctionnement du Perceptron et de tester sa capacité de prédiction en phase opérationnelle.
+</p>
+<p>Pourquoi vouloir classer des groupes de points? Il y a beaucoup de cas d'usages dans lesquels il faut pouvoir identifier une donnée inconnue à partir de caractéristiques connues mais très nombreuses et difficiles à exploiter rapidement. On peut vouloir par exemple détecter qu'un mail reçu est un spam ou qu'une transaction bancaire est frauduleuse. Ce type d'algorithme peut aussi servir à classer les demandeurs de crédits en profils plus ou moins avantageux pour l'organisme de crédit.
+</p>
+<p>Le Perceptron a besoin d'une phase d'apprentissage à l'aide d'un historique d'enregistrements dont il connaît le groupe d'appartenance (spam ou pas spam, frauduleux ou normal, avantageux ou désaventageux). Lorsque le Perceptron a appris à définir une séparation entre deux groupes, il peut alors prédire le groupe d'appartenance de tout nouvel enregistrement.
+</p>
+<p>L'application ci-dessous permet de visualiser les étapes de mise en fonctionnement du Perceptron et de tester sa capacité de prédiction en phase opérationnelle.
 </p>
 <p></p>
 <p></p>
@@ -280,6 +283,8 @@ svg12{
 	var j=0;
 	var Point_x = 0;
 	var Point_y = 0;
+	var blackpoint_ordonnee = "KO";
+	var blackpoint_abscisse  = "KO";
 	
 	
 	function Math_sign(ValeurASigner){
@@ -400,6 +405,7 @@ svg12{
 			d3.select("#btn_perpIT").remove();	
 			d3.select("svg2").append("p").attr("id", "p_fin2").text("Fin de l'apprentissage - La droite identifiée est en orange sur le graphique").style("color","red");	
 			d3.select("#p2").remove(); //Suppression paragraphe - Phase apprentissage
+			Prédiction();
 			}
 			
 		//d3.select("svg2").append("p").text( "Yn_w calculé " +Yn_w);
@@ -485,7 +491,7 @@ svg12{
 		d3.select("svg").append("circle").attr("id", "Badpointcircle")    
 			.style("stroke", "black")
 			.style("stroke-width", 1)
-			.style("fill", "none")		
+			.style("fill", "none")
 			.attr("r", 8)
 			.attr("cx", Xb)
 			.attr("cy", Yb);
@@ -554,47 +560,61 @@ svg12{
 	}
 	
 	function lineAdjustToSVG(slopeW, lineoffsetW){
+
 		var tabl = [];
+		var x0 = -200;
+		var y0 = -200;
 		var x1 = 0;
 		var y1 = 0;
 		var x2 = 0;
 		var y2 = 0;
 		var x3 = 0;
 		var y3 = 0;
+
+
 		
 		x1 = -200;
 		y1 = x1*slopeW + lineoffsetW;
+
 		if(y1<-200){
 			y1 = -200;
 			x1 = (y1-lineoffsetW)/slopeW;
+
 			if(slopeW >= 0){				
 				if(x1 <= 200){
 					y2 = 200;
 					x2 = (y2-lineoffsetW)/slopeW;
-					if (x2 <= 200){
-						x3 = x2;
-						y3 = y2;
+					if (x2 <= 200){					
+						x3 = 200;
+						y3 = 200;
 					}
 					else{ //x2 > 200
 						x2 = 200;
 						y2 = x2*slopeW + lineoffsetW;
-						x3 = x2;
-						y3 = y2;				
+						x3 = 200;
+						y3 = 200;							
 					}
 				}
 				else{ //x1 > 200
 					// la droite ne passe pas dans le cadre
+					//relancer la fonction par un break dans ce cas
+					x0 = 200;
+					y0 = 200;
 					x1 = -200;
 					y1 = -200;
 					x2 = -200;
 					y2 = -200;
 					x3 = -200;
-					y3 = -200;
+					y3 = -200;				
 				}
 				
 			}
 			else{
 				// la droite ne passe pas dans le cadre
+					
+				//relancer la fonction par un break dans ce cas
+				x0 = 200;
+				y0 = 200;				
 					x1 = -200;
 					y1 = -200;
 					x2 = -200;
@@ -608,43 +628,52 @@ svg12{
 				y2 = 200;
 				x2 = (y2-lineoffsetW)/slopeW;
 				if (x2 <= 200){
-					x3 = x2;
-					y3 = y2;
+					x3 = 200;
+					y3 = 200;
+					
 				}
 				else{// x2 > 200
 					x2 = 200;
 					y2 = x2*slopeW + lineoffsetW;
-					x3 = x2;
-					y3 = y2;
+					x3 = 200;
+					y3 = 200;
+									
 				}
 			}
 			else{
 				y2 = -200;
 				x2 = (y2-lineoffsetW)/slopeW;
 				if (x2 <= 200){
-					x3 = x2;
-					y3 = y2;
+					x3 = 200;
+					y3 = -200;
+					
 				}
 				else{//x2>200
 					x2 = 200;
 					y2 = x2*slopeW + lineoffsetW;
-					x3 = x2;
-					y3 = y2;
+					x3 = 200;
+					y3 = -200;
+									
 				}
 			}				
 		}		
+
 		if(y1>200){
 			y1 = 200;
 			x1 = (y1-lineoffsetW)/slopeW;				
-				
+			x0 = -200;
+			y0 = 200;
 			if(slopeW >= 0){
 				// la droite ne passe pas dans le cadre
+				x0 = 200;
+				y0 = 200;
 				y1 = 200;
 				x1 = 200;
 				x2 = 200;
 				y2 = 200;
 				x3 = 200;
-				y3 = 200;								
+				y3 = 200;	
+				//relancer la fonction par un break dans ce cas				
 			}
 			else{ // pente negative
 				if (x1 <= 200){
@@ -653,30 +682,39 @@ svg12{
 					if (y2 <=-200){
 						y2 = -200;
 						x2 = (y2-lineoffsetW)/slopeW;
-						x3 = x2;
-						y3 = y2;
+						x3 = 200;
+						y3 = -200;
+						
 					}
 					else{//y2>-200
-						x3 = x2;
-						y3 = y2;							
+						x3 = 200;
+						y3 = -200;		
+											
 					}
 				}
 				else{ //x1 > 200
+					x0 = 200;
+					y0 = 200;
 					y1 = 200;
 					x1 = 200;
 					x2 = 200;
 					y2 = 200;
 					x3 = 200;
-					y3 = 200;	
+					y3 = 200;								
 				}
 			}		
 		}
-		tabl[0] = x1;
-		tabl[1] = y1;
-		tabl[2] = x2;
-		tabl[3] = y2;
-		tabl[4] = x3;
-		tabl[5] = y3;
+		
+		
+		tabl[0] = x0;
+		tabl[1] = y0;		
+		tabl[2] = x1;
+		tabl[3] = y1;
+		tabl[4] = x2;
+		tabl[5] = y2;
+		tabl[6] = x3;
+		tabl[7] = y3;
+
 		
 		return tabl;
 	}
@@ -687,7 +725,7 @@ svg12{
 		//W et x y sont ici exprimes dans un repère centré sur l'origine
 		var tableau=[];
 		tableau = lineAdjustToSVG(slopeW,lineoffsetW);
-		var TabDataSet = [[tableau[0],tableau[1]], [tableau[2],tableau[3]], [tableau[4],tableau[5]],];
+		var TabDataSet = [[tableau[2],tableau[3]], [tableau[4],tableau[5]],];
 		
 		var pathFunction = d3.svg.line()
                           .x(function(d) { return (d[0]+200); })
@@ -713,7 +751,7 @@ svg12{
 		
 		var tableau=[];
 		tableau = lineAdjustToSVG(slopeW,lineoffsetW);		
-		var TabDataSet = [[tableau[0],tableau[1]], [tableau[2],tableau[3]], [tableau[4],tableau[5]],];
+		var TabDataSet = [[tableau[2],tableau[3]], [tableau[4],tableau[5]],];
 		
 		var pathFunction = d3.svg.line()
                           .x(function(d) { return (d[0]+200); })
@@ -741,11 +779,11 @@ svg12{
 	function Etiquetage() {
             
 			d3.select("svg2").append("p").attr("id","p_p3").text("Les points forment deux groupes différents, les bleus (Label = -1) et les rouges (Label = +1))");	
-
+			lineoffsetXY = 200*(1-slope) + lineoffset;
 			for (var i = 0; i < numPoints; i++) {
 				Xn[i][0] = bubbleChart[i][0];
 				Xn[i][1] = bubbleChart[i][1];
-				Xn[i][2] = Math_sign( Xn[i][1] - slope*Xn[i][0] - lineoffset) // On assigne a chaque point la valeur +1 si pour ce point y-aX-b >=0 et on assigne -1 si cette valeur est <0					
+				Xn[i][2] = Math_sign( Xn[i][1] - slope*Xn[i][0] - lineoffsetXY) // On assigne a chaque point la valeur +1 si pour ce point y-aX-b >=0 et on assigne -1 si cette valeur est <0					
 			}
 	
 			
@@ -775,9 +813,9 @@ svg12{
 				d3.select("#p1").remove();				
 				d3.select("svg2").append("p").attr("id","p_a1").text( "Le Perceptron ne connaît pas la séparation entre les deux groupes de points, c'est ce qu'il doit trouver. Il ne connaît que l'emplacement des points (leurs coordonnées) et leur groupe d'appartenance (leur couleur). Il commence par prendre une droite au hasard et évalue le taux d'erreur obtenu avec cette droite. Le taux d'erreur correspond au rapport du nombre de points mal classés sur l'ensemble des points.");
 				d3.select("svg2").append("p").attr("id","p_a2").text( "Le perceptron choisit ensuite un point au hasard parmi les points qu'il a mal classés, ce point lui sert à s'orienter pour calculer une nouvelle droite. Au fur et à mesure des itérations les droites se rapprochent de la séparation entre les deux groupes de points et le taux d'erreur diminue."); 
-				d3.select("svg2").append("p").attr("id","p_a3").text( "A l'exécution pas à pas, le point mal classé est identifiable par un cercle gris. On observe aussi à l'exécution pas à pas que les points choisis par le Perceptron pour s'orienter sont toujours soit au dessus de la droite verte s'ils sont rouges soit en dessous de la droite verte 'ils sont bleus.");
-				d3.select("svg2").append("p").attr("id","p_a4").text( "Dans certains cas de figure, il se peut que le perceptron ne converge pas vers une solution à taux d'erreur nul mais oscille indéfiniment. On considèrera alors comme solution une droite pour laquelle le taux d'erreur est minimum.");
-				d3.select("svg2").append("p").attr("id","p_a5").text( "L'option -Perceptron Automatique- lance l'apprentissage sans arrêt à chaque itération.");
+				d3.select("svg2").append("p").attr("id","p_a3").text( "A l'exécution pas à pas, le point mal classé est identifiable par un cercle gris.");
+				d3.select("svg2").append("p").attr("id","p_a4").text( "Dans certains cas, il se peut que le perceptron ne converge pas vers une solution à taux d'erreur nul mais oscille indéfiniment. On considèrera alors comme solution une droite pour laquelle le taux d'erreur est minimum. D'autre part vous pourrez constater que plus le nombre de points est élévé plus le nombre d'itérations est lui aussi élevé pour aboutir à la solution mais l'approche est plus précise ce qui fait qu'en cas de non convergence on obtient toutefois un taux d'erreur plus faible.");
+				d3.select("svg2").append("p").attr("id","p_a5").text( "L'option - Perceptron Automatique - lance l'apprentissage sans arrêt à chaque itération.");
 
 				
 				d3.select("svg12").append("button")
@@ -874,41 +912,16 @@ svg12{
     //Draw a line
 	var runLine = function() {
 		d3.selectAll("path").remove();
-		slope = getRandomInt(-40,+40)/10; 
-		lineoffset = getRandomInt(50,250);
-		var x1 = 0;
-		var y1 = x1*slope + lineoffset;
-		if(slope > 0){
-			var y2 = 400;
-			var x2 = (y2-lineoffset)/slope;
-			if (x2 < 400){
-					var x3 = 400;
-					var y3 = 400;
-			}
-			else{
-			   //semble ne pas etre à traiter car area limitée en largeur par svg (mais pas en hauteur sur IE ....)
-			}
-		}
-		else{
-				var y2 = 0;
-				var x2 = (y2-lineoffset)/slope;
-				if (x2 < 400){
-					var x3 = 400;
-					var y3 = 0;
-				}
-				else{
-					//semble ne pas etre à traiter car area limitée en largeur par svg (mais pas en hauteur sur IE ....)
-				}
-		}
-
-		
-		//var datasetpoints = [[x1, y1, x2, y2]];
-		var datasetpoints2 = [[x1,y1], [x2,y2], [x3,y3],];
-		
+		slope = getRandomInt(-300,+300)/100; 
+		lineoffset = getRandomInt(-150,150);
+		var tableau=[];
+		tableau = lineAdjustToSVG(slope,lineoffset );
+		var datasetpoints2 = [[tableau[0],tableau[1]], [tableau[2],tableau[3]], [tableau[4],tableau[5]], [tableau[6],tableau[7]],];
+	
 		var area = d3.svg.area()
-			.x(function(d) { return d[0]; })
+			.x(function(d) { return d[0]+200; })
 			.y0(0)
-			.y1(function(d) { return d[1]; });
+			.y1(function(d) { return d[1]+200; });
 			
 		svg.append("path")
 			.datum(datasetpoints2)
@@ -957,51 +970,44 @@ svg12{
 			
 	function add_abscisse(){   
 		if (document.getElementById('abscisse').value!='') { 
-		Point_x = document.getElementById('abscisse').value;
-			if(Point_x!="0" && Point_y!="0"){
-				d3.selectAll("path").remove();
-				d3.selectAll("text").remove();
-				d3.select("#p_a5").remove();
-				d3.select("#p_p4").remove();
-				d3.selectAll("line").remove();
-				drawperceptronline_finalErrorRate(TabWcostmin,"orange",4, 5);
-						
-				d3.selectAll("svg")
-				.append("circle")
-				.style("stroke", "black")
-				.style("fill", "gray")
-				.style("opacity", 1)
-				.attr("r", 5)
-				.attr("cx",Point_x)
-				.attr("cy",Point_y);
-				
-				diagnostic();
-			}	
+			Point_x = document.getElementById('abscisse').value;											
+				blackpoint_abscisse = "OK";
+				drawblackpoint();				
 		}
 	}
 			
 	function add_ordonnée(){   
 		if (document.getElementById('ordonnée').value!='') { 
-		Point_y = document.getElementById('ordonnée').value;
-			if(Point_x!="0" && Point_y!="0"){
-				d3.selectAll("path").remove();
-				d3.selectAll("text").remove();
-				d3.selectAll("line").remove();
-				d3.select("#p_a5").remove();
-				d3.select("#p_p4").remove();
-				drawperceptronline_finalErrorRate(TabWcostmin,"orange",4, 5);
-										
-				d3.selectAll("svg")
+		Point_y = document.getElementById('ordonnée').value;									
+				blackpoint_ordonnee = "OK";
+				drawblackpoint();				
+		}
+	}
+	
+	function drawblackpoint(){
+
+		if ((blackpoint_ordonnee == "OK")&&(blackpoint_abscisse=="OK")){
+			d3.selectAll("path").remove();
+			d3.selectAll("text").remove();
+			d3.select("#p_a5").remove();
+			d3.select("#p_p4").remove();
+			d3.selectAll("line").remove();
+			d3.select("#Badpointcircle").remove();
+			drawperceptronline_finalErrorRate(TabWcostmin,"orange",4, 5);
+			d3.selectAll("#blkpt").remove();
+			d3.selectAll("svg")
 				.append("circle")
+				.attr("id","blkpt")
 				.style("stroke", "black")
 				.style("fill", "gray")
 				.style("opacity", 1)
 				.attr("r", 5)
 				.attr("cx",Point_x)
 				.attr("cy",Point_y);
-				
-				diagnostic();
-			}	
+			diagnostic();
+			blackpoint_abscisse = "KO";
+			blackpoint_ordonnee = "KO";
+			
 		}
 	}
 	
@@ -1011,10 +1017,14 @@ svg12{
 		var y_pt = Point_y - 200;
 		if(y_pt> (x_pt*slopeW+lineoffsetW)){
 			var couleur_label = "rouge";
+			d3.select("#zone2").append("p").attr("id","p_final").text("Le point de coordonnées x = "+Point_x+" et y = "+Point_y+" appartient au groupe "+ couleur_label+".").style("color","red");		
 		}
-		else{var couleur_label = "bleu";}
+		else{
+			var couleur_label = "bleu";
+			d3.select("#zone2").append("p").attr("id","p_final").text("Le point de coordonnées x = "+Point_x+" et y = "+Point_y+" appartient au groupe "+ couleur_label+".").style("color", "blue");		
+		}
 		
-		d3.select("#zone2").append("p").attr("id","p_final").text("Le point de coordonnées x = "+Point_x+" et y = "+Point_y+" appartient au groupe "+ couleur_label+".");		
+		
 		
 	}
 	
@@ -1036,6 +1046,8 @@ svg12{
 		d3.select("#p_p0").remove();
 		d3.select("#p_p01").remove();
 		d3.select("#p_p02").remove();
+		d3.select("#p_p03").remove();		
+		d3.select("#p_p04").remove();
 		d3.select("#p_p1").remove();
 		d3.select("#p_p2").remove();
 		d3.select("#p_p3").remove();
@@ -1043,8 +1055,9 @@ svg12{
 		d3.select("#p_f1").remove();
 		d3.select("#p_f2").remove();
 		d3.select("#p_f3").remove();
-		d3.select("#p_f4").remove();
-		d3.select("#p_f5").remove();
+		d3.select("#p_t4").remove();
+		d3.select("#p_t5").remove();
+		d3.select("#p_t6").remove();
 		d3.selectAll("#p_final").remove();
 		d3.select("#p5").remove();
 		d3.selectAll("h4").remove();
@@ -1094,7 +1107,7 @@ svg12{
 		paddingx = 30;
 		hx = 300;
 		hy = 300;	
-		Decalage_right_courbeCout = 500;
+		Decalage_right_courbeCout = 550;
 		formatAsPercentage = d3.format(".1%");
 		xScale = d3.scale.linear();
 		yScale = d3.scale.linear();
@@ -1104,7 +1117,8 @@ svg12{
 		firsttime = "OK";
 		Point_x = 0;
 		Point_y = 0;
-		
+		blackpoint_ordonnee = "KO";
+		blackpoint_abscisse  = "KO";
 		
 		d3.selectAll("svg").append("rect")
 			.style("fill", "Plum")
@@ -1147,9 +1161,11 @@ svg12{
 				}
 		});
 		d3.select("svg2").append("h4").attr("id","p6").text("Phase de préparation des données").style("font-size", "17px");		
-		d3.select("svg2").append("p").attr("id","p_p0").style("font-family","Arial").style("font-size","13px").text("Nous allons symboliser les enregistrements par des points affichés dans un espace à deux dimensions. Dans le cas par exemple d'attribution de crédit, l'enristrement correspond à un client demandeur de crédit. Ce client est identifiable par un certain nombre d'informations comme l'âge, le niveau de diplôme, le statut professionnel ou le lieu d'habitation. C'est à partir de ces caractéristiques que l'on veut pouvoir identifier des groupes d'individus, chaque groupe étant plus ou moins favorable à l'attribution d'un crédit. Pour simplifier les choses nous considèrerons seulement deux caractéristiques par exemple ,l'âge et la profession et nous nous limiterons à deux groupes (favorable ou non favorable).");	
-		d3.select("svg2").append("p").attr("id","p_p01").style("font-family","Arial").style("font-size","13px").text(" De cette façon chaque individu peut être représenté par un point dans un espace à deux dimensions, les coordonnées de ce points sont les caractérisques de l'individu et la couleur du point est son statut favorable (en bleu) et non favorable (en rouge).");	
-		d3.select("svg2").append("p").attr("id","p_p02").style("font-family","Arial").style("font-size","13px").text(" Cette simplification permet de visualiser graphiquement le fonctionnement de l'algorithme, mais dans les cas réels les individus sont identifiés par des milliers voir des centaines de milliers de caractéristiques, on parle d'espace de dimension n.");	
+		d3.select("svg2").append("p").attr("id","p_p0").style("font-family","Arial").style("font-size","13px").text(" Le Perceptron apprend à partir d'un historique de données connues, c'est à dire des enregistrements dont il connait le groupe d'appartenance. Dans le cas par exemple d'attribution de crédit, l'enregistrement correspond à un client demandeur de crédit. Ce client est identifiable par un certain nombre d'informations comme l'âge, le niveau de diplôme, le statut professionnel ou le lieu d'habitation. C'est à partir de ces caractéristiques que l'on va pouvoir identifier les groupes d'individus, chaque groupe étant plus ou moins avantageux pour l'attributeur du crédit. Pour simplifier les choses nous considèrerons seulement deux caractéristiques par exemple, l'âge et le salaire et nous nous limiterons à deux groupes (favorable ou non favorable).");	
+		d3.select("svg2").append("p").attr("id","p_p01").style("font-family","Arial").style("font-size","13px").text(" L'interface ci-dessous vous permet de créer vous même le jeu de données d'apprentissage. Les clients sont symbolisés par des points affichés dans un espace à deux dimensions. Les coordonnées de ces points sont les caractérisques du client et la couleur du point est son statut favorable (en bleu) et non favorable (en rouge).");	
+		d3.select("svg2").append("p").attr("id","p_p02").style("font-family","Arial").style("font-size","13px").text(" Cette simplification permet de visualiser graphiquement le fonctionnement de l'algorithme, mais dans les cas réels les enregistrements sont identifiés par des milliers voire des centaines de milliers de caractéristiques, on parle d'espace de dimension n.");	
+		d3.select("svg2").append("p").attr("id","p_p03").style("font-family","Arial").style("font-size","13px").text(" Pour une exécution pas à pas de l'algorithme, choisir plutôt entre 20 et 200 points, au delà la durée de convergence va commencer à être longue.");	
+		d3.select("svg2").append("p").attr("id","p_p04").style("font-family","Arial").style("font-size","13px").text(" Avec l'exécution automatique de l'algorithme, choisir au maximum jusqu'à 4000 points, au delà le graphique commence à être trop chargé et moins lisible.");	
 
 		}
 
@@ -1159,7 +1175,10 @@ svg12{
 		d3.select('#zone2').append("p").attr("id","p_f1").style("font-family","Arial").style("font-size","13px").text("Lorsque vous saisissez les coordonnées d'un nouveau point, le perceptron est capable d'identifier son groupe d'appartenance.");	
 		d3.select('#zone2').append("p").attr("id","p_f2").style("font-family","Arial").style("font-size","13px").text("L'axe des abscisses est de la gauche vers la droite sur le graphique.");	
 		d3.select('#zone2').append("p").attr("id","p_f3").style("font-family","Arial").style("font-size","13px").text("L'axe des ordonnées est du haut vers le bas sur le graphique.");
-		d3.select('#zone2').append("p").attr("id","p_f4").style("font-family","Arial").style("font-size","13px").text("Lorsque vous avez validé chaque coordonnée, le point que vous avez choisi apparaît en noir sur le graphique. N'hésitez pas à faire plusieurs essais.");		
+		d3.select('#zone2').append("text").attr("id","p_t4").style("font-family","Arial").style("font-size","13px").text("Lorsque vous avez validé ");		
+		d3.select('#zone2').append("text").attr("id","p_t5").style("font-family","Arial").style("font-size","13px").style("font-weight","bold").text("les deux coordonnées");		
+		d3.select('#zone2').append("text").attr("id","p_t6").style("font-family","Arial").style("font-size","13px").text(", le point que vous avez choisi apparaît en noir sur le graphique. N'hésitez pas à faire plusieurs essais.");		
+		
 		var node2 = document.createElement('div'); 
 		node2.innerHTML = '<br /><label for="abscisse" style="display: inline-block; width:250px; text-align: left; font-size: 13px; font-family: Arial; margin-left: 4px">  Choisir une abscisse entre 0 et 400: </label><input type="number" min="0" max="400" step="10" value="50" id="abscisse"><input value="valider" type="button"  onClick="add_abscisse()" id="buttonChoixAbscisse">'+
 		'<br /><br /><label for="ordonnée" style="display: inline-block; width:250px; text-align: left; font-size: 13px; font-family: Arial; margin-left: 4px">  Choisir une ordonnée entre 0 et 400: </label><input type="number" min="0" max="400" step="10" value="50" id="ordonnée"><input value="valider" type="button"  onClick="add_ordonnée()" id="buttonChoixOrdonnée"><br /><br />';	
