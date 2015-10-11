@@ -58,6 +58,8 @@
 }
 #lancement {
   position: relative;
+  font-family: 'Architects Daughter', 'Helvetica Neue', Helvetica, Arial, serif;
+  font-size: 13px;
   width: 900px;
   margin-top= 40px;
   margin-bottom = 10px;
@@ -212,16 +214,10 @@ svg12{
 <div id="introduction"></div>
 <div id="pad"></div>
 <div id="lancement">
-<p>Le Perceptron est l'algorithme le plus simple qui existe pour identifier une séparation entre deux groupes de points. C'est une brique de base de l'apprentissage automatique qui permet de créer d'autres modèles bien plus complexes comme les réseaux de neuronnes.
-</p>
-<p>Pourquoi vouloir classer des groupes de points? Il y a beaucoup de cas d'usages dans lesquels il faut pouvoir identifier une donnée inconnue à partir de caractéristiques connues mais très nombreuses et difficiles à exploiter rapidement. On peut vouloir par exemple détecter qu'un mail reçu est un spam ou qu'une transaction bancaire est frauduleuse. Ce type d'algorithme peut aussi servir à classer les demandeurs de crédits en profils plus ou moins avantageux pour l'organisme de crédit.
-</p>
-<p>Le Perceptron a besoin d'une phase d'apprentissage à l'aide d'un historique d'enregistrements dont il connaît le groupe d'appartenance (spam ou pas spam, frauduleux ou normal, avantageux ou désavantageux). Lorsque le Perceptron a appris à définir une séparation entre deux groupes, il peut alors prédire le groupe d'appartenance de tout nouvel enregistrement.
-</p>
-<p>L'application ci-dessous permet de visualiser les étapes de mise en fonctionnement du Perceptron et de tester sa capacité de prédiction en phase opérationnelle.
-</p>
-<p></p>
-<p></p>
+<p></p> Les Machines à Vecteurs de Support, appelées SVM permettent comme le Perceptron d'identifier la séparation entre deux groupes de points. Le SVM apporte cependant des possibilités et des optimisations supplémentaires:
+<p></p> Tout d'abord avec le SVM la séparation identifiée est mieux optimisée car elle est unique et correspond à la zone équidistante et la plus éloignée possible des deux groupes. On comprend que de cette façon lorsque l'on quitte le jeu de données d'entrainement pour tester l'algorithme avec de nouvelles données, on a plus de chance d'obtenir un meilleur taux de classifications exactes. 
+<p></p> Le SVM permet aussi de séparer des groupes de données non linéairement séparables (groupe inclu dans dans un autre groupe). Ce cas n'est pas traité dans cette page, il fait l'objet d'un paragraphe isolé ("SVM with kernel-trick")
+<p></p> Le SVM peut tolérer quelques points mal classés pour un meilleur résultat global, car là aussi dans les cas réels les données ne sont pas toujours parfaitement séparables. On parle alors de "Soft margin SVM".
 </div>
 <div id="pad2"><br /><br /></div>
 <div id="zone1">	
@@ -275,7 +271,7 @@ svg12{
 	var P = [];		
 	var slope = 0;
 	var	lineoffset = 0;
-	var Etat_droite = "Choix_en_cours";
+	
 	var Etat_points = "Choix_en_cours";
 	var valide = "valide";
 	var test = 0;
@@ -284,14 +280,13 @@ svg12{
 	W[0] =  [0,0,0,0];
 	var slopeW = 0;
 	var	lineoffsetW = 0;
-	W[0] =  [0, 0, 0,0];
 	var	IT = 0;
-	var	Xb = 0;
-	var	Yb = 0;
-	var Ynbad = 0;
+	var	XRn = 0;
+	var	YRn = 0;
+	var YnRn = 0;
 	var	Yn_w = [];
 	var	Wcost = 0;
-	var Wcostmin = 1000;
+	var Wcostmin = 5000;
 	var TabWcostmin = [];
 	var tabl1=[];
 	var paddingy = 27;
@@ -309,7 +304,12 @@ svg12{
 	var Point_y = 0;
 	var blackpoint_ordonnee = "KO";
 	var blackpoint_abscisse  = "KO";
+	var Lambda = 0.1;
+	var coord_origine  = [];
 	
+	function zeroFilledArray(size) {
+		return new Array(size + 1).join('0').split('');
+	}
 	
 	function Math_sign(ValeurASigner){
 	
@@ -403,65 +403,78 @@ svg12{
 			
 	}
 	
-	function Perceptron_Pasapas() {		
-		if (IT == 0){d3.select("#btn_perpOS").remove();} //on supprime le bouton de choix Perceptron One Shot
+	function Pegasos_Pasapas() {		
+		if (IT == 0){d3.select("#btn_perpOS").remove();} //on supprime le bouton de choix Pegasos  automatique
+		passage_rep_centrenorme();		
 		
-		drawperceptronline(W,"darkgreen", 1);
-		//d3.select("svg2").append("p").text( "Pour IT = " +IT+ "  " +"les coordonnees de W sont  "+W[IT][0] + "    "+W[IT][1] + "  "+W[IT][2]);		
-		//for (var i = 0; i < numPoints; i++) {d3.select("svg2").append("p").text( "les labels des points sont "+Xn[i][2]);}
-		LabelisePoints();
-		Wcost = CalculateAddnewCost(Yn_w);
-		affichage_cout();
-		if(Wcost == 0){
+	
+		d3.selectAll("svg")
+			.append("circle")
+			.attr("id","blkpt_origin")
+			.style("stroke", "black")
+			.style("fill", "black")
+			.style("opacity", 1)
+			.attr("r", 2)
+			.attr("cx",coord_origine[0])
+			.attr("cy",coord_origine[1]);
+		       			
+		for(var i=1;i<10;i++){
+		
+			IT = i;
+			nt = 1/(Lambda*IT)
+			tabl1 = FindRandomPoint();		
+			XRd = tabl1[0];
+			YRd = tabl1[1];
+			YnRd = tabl1[2];
+						
+			CalculateAddnewW(XRd,YRd,YnRd,nt);					
+			drawperceptronline(W,"green", 0.5);
+					
+			LabelisePoints();
+			Wcost = CalculateAddnewCost(Yn_w);
+			affichage_cout();
+					
+			
+			Yn_w  = zeroFilledArray(Yn.length);
+			}
+		if(Wcost < 0.2){				
+			d3.select("svg2").append("p").attr("id","p_p42").text( "Pegasos a effectué "+(IT+1)+" itérations , la meilleure solution est la droite affichée en orange , elle est associée à un taux d'erreur de: "+Wcostmin.toFixed(5));
+			d3.select("#p2").remove(); //Suppression paragraphe - Phase apprentissage
+			d3.select("svg2").append("p").attr("id","p_p43").text( "Paramètres du modèle:   Wo = " +TabWcostmin[0]+ "  " +"  W1 =  "+TabWcostmin[1]+"  W2 =  "+TabWcostmin[2]);			
+			drawperceptronline_finalErrorRate(TabWcostmin,"orange",4, 5); // il faut ajouter un argument dans cette fonction pour le cas ou le W choisi n'est identifiable par l'IT en cours comme ici où on revient dans le passé
+			d3.select("#p5").text("Taux d'erreur minimum: " + Wcostmin.toFixed(5) );
 			d3.select("svg0").append("button")
 				.attr("id","btn0")
 				.attr("value","PLAY")
-				.attr("margin-top","40px")
-				.text("Lancer le Perceptron")
-				.on("click", Lancer_Perceptron);
-			
-			var slope_finale = -W[IT][1]/W[IT][2];
-			var lineOffsetfinal = -W[IT][0]/W[IT][2];
-			slope_finale = slope_finale.toFixed(2);
-			lineOffsetfinal = lineOffsetfinal.toFixed(2);
-			drawperceptronline(W,"orange",4, 5);
-			d3.select("svg2").append("p").attr("id", "p_fin1").text( "Le perceptron a trouvé une solution pour classer les points. ").style("color","red");
+				.text("Relancer Pegasos")
+				.on("click", Lancer_Pegasos);	
+			d3.select("#btn_perpOS").remove();
+			d3.select("#btn_perpOS").remove();
+			d3.select("svg2").append("p").attr("id", "p_fin1").text( "Pegasos a trouvé une solution pour classer les points. ").style("color","red");
 			d3.select("#btn_perpIT").remove();	
-			d3.select("svg2").append("p").attr("id", "p_fin2").text("Fin de l'apprentissage - La droite identifiée est en orange sur le graphique").style("color","red");	
-			d3.select("#p2").remove(); //Suppression paragraphe - Phase apprentissage
+			d3.select("svg2").append("p").attr("id", "p_fin2").text("Fin de l'apprentissage - La droite identifiée est sur le graphique").style("color","red");	
+
 			Prédiction();
-			}
+	}
 			
-		//d3.select("svg2").append("p").text( "Yn_w calculé " +Yn_w);
-		tabl1 = FindBadPoint(Yn_w);
-		//d3.select("svg2").append("p").text( "test Xb " +Xb+ "  " +"test Yb "+Yb);	
-		Xb = tabl1[0];
-		Yb = tabl1[1];
-		Ynbad = tabl1[2];
-		BadPointShow(Xb,Yb);
-		CalculateAddnewW(Xb,Yb,Ynbad);
-		Yn_w = [];
-		IT = IT + 1;
+			
+
 		if(firsttime == "OK"){
 			d3.select("svg12").append("button")
 				.style("margin-left","8px")
 				.attr("id","btn6")
-				.text("Relancer le Perceptron")
-				.on("click", Lancer_Perceptron);
+				.text("Relancer Pegasos")
+				.on("click", Lancer_Pegasos);
 			firsttime = "KO";
 		}
+	
 			
 	}
 	
-	function Wo_init(){
-		index = getRandomInt(1, numPoints) -1;
-		W[0][0] = 20000;		
-		W[0][1] = Xn[index][0] *  Xn[index][2];		
-		W[0][2] = Xn[index][1] *  Xn[index][2];	
-	}
+
 	
 	function LabelisePoints(){	
-		for (var i = 0; i < numPoints; i++) {Yn_w[i]  = Math_sign((W[IT][0]*1+(W[IT][1]*(Xn[i][0]-200))+(W[IT][2]*(Xn[i][1]-200))));
+		for (var i = 0; i < numPoints; i++) {Yn_w[i]  = Math_sign((W[IT][0]*1)+(W[IT][1]*Xn[i][0])+(W[IT][2]*Xn[i][1]));
 			//on pose Xo egal à 1,les -200 correspondent au changement de reperes, les calcul sont dans le repère dont 0 est l'origine, au milieu du carré. sur le graphique le carré a pour origine sont coin en haut à gauche
 		}		
 	}
@@ -470,41 +483,31 @@ svg12{
 		Wcost = 0;
 		for (var i = 0; i < numPoints; i++) {
 			if ((Yn_w[i] * Xn[i][2]) < 0){Wcost = Wcost + 1;} 
+			//d3.select("svg2").append("p").text("Yn_w[i] = " + Yn_w[i]);	
+			//d3.select("svg2").append("p").text("Xn[i][2] = " + Xn[i][2]);	
 		}
+		//d3.select("svg2").append("p").text("W = " +W[IT][0] +" "+W[IT][1]+ " " +W[IT][2]);
 		Wcost = Wcost / numPoints;
 		W[IT][3] = Wcost;
 		//d3.select("svg2").append("p").text("Pour IT = " + IT + " Le taux d'erreur est: " +Wcost);	
 		
-		if (Wcost < Wcostmin){		
+		if (Wcost <= Wcostmin){		
 			Wcostmin = Wcost;
 			TabWcostmin = [W[IT][0],W[IT][1],W[IT][2]];
 			d3.select("#p5").text("Taux d'erreur minimum: " + Wcostmin.toFixed(2) );
 		}
-				
+		
+		//d3.select("svg2").append("p").text("Wcostmin = " + Wcostmin);	
+		//d3.select("svg2").append("p").text("Wcost = " + Wcost);		
 		return Wcost;
 	}
 	
-	function FindBadPoint(Yn_w){
-		var BadPoint = [];
-		var Xbad = 0;
-		var Ybad = 0;
-		var Ynbad = 0;
+	function FindRandomPoint(){
 		var tabl=[];
-		for (var i = 0; i < numPoints; i++) {
-			if ((Yn_w[i] * Xn[i][2])<0){
-				BadPoint.push([i]);
-				test = 22;
-			}
-		}		
-		index = getRandomInt(1, BadPoint.length) -1;
-		Xbad = Xn[BadPoint[index]][0];
-		Ybad = Xn[BadPoint[index]][1];
-		Ynbad = Xn[BadPoint[index]][2];
-		
-		//d3.select("svg2").append("p").text("Pour IT = " + IT +" "+ "Nombre de points mal classes =  " +BadPoint.length +" l'index d'un point retenu est "+index + " avec: X = "+Xbad +"Y = "+Ybad);	
-		tabl[0] = Xbad;
-		tabl[1] = Ybad;
-		tabl[2] = Ynbad;
+		index = getRandomInt(1, Xn.length) -1;
+		tabl[0] = Xn[index][0];
+		tabl[1] = Xn[index][1];
+		tabl[2] = Xn[index][2];
 		return tabl;
 	}
 	
@@ -521,60 +524,120 @@ svg12{
 			.attr("cy", Yb);
 	}
 	
-	function CalculateAddnewW(Xb,Yb,Ynbad){
-		var W0 = W[IT][0] + (400* Ynbad);	// pour adaptation aux coordonnées non normalisées des points et graphique de 500 par 500	
-		var W1 = W[IT][1] + ((Xb-200) * Ynbad);		
-		var W2 = W[IT][2] + ((Yb-200) * Ynbad);
-		//d3.select("svg2").append("p").text( "Ynbad du badpoint: "+Ynbad);		
-		//d3.select("svg2").append("p").text( "Les anciennes coord de W sont: Wo = " +W[IT][0]+ "  " +"W1 =  "+W[IT][1]+"W2 =  "+W[IT][2]);	
+	
+	function CalculateAddnewW(XRn,YRn,YnRn,nt){
+	//point choisi au hasard parmi les points du training set XRn, YRn, label de ce point est YnRn
+		scal = (W[IT-1][0]*1)+(W[IT-1][1]*XRn)+(W[IT-1][2]*YRn)
+		if(YnRn*scal<1){ //agit si sort de la zone correcte, dans la marge ou du mauvais côté
+			var W0 = (1-(nt*Lambda))*W[IT-1][0] + (nt*YnRn)*100;	//offset imperceptible si pas multiplié par plusieurs centaines
+			var W1 = (1-(nt*Lambda))*W[IT-1][1] + (nt*YnRn*XRn);	
+			var W2 = (1-(nt*Lambda))*W[IT-1][2] + (nt*YnRn*YRn);	
+			//d3.select("svg2").append("p").text( "XRn: "+XRn);			
+			//d3.select("svg2").append("p").text( "YRn: "+YRn);			
+		}
+		else{ // revient à ne rien faire quand t est grand car le point est du bon côté de la droite et hors de la marge
+			var W0 = (1-(nt*Lambda))*W[IT-1][0];	
+			var W1 = (1-(nt*Lambda))*W[IT-1][1];	
+			var W2 = (1-(nt*Lambda))*W[IT-1][2];			
+		}
+		rescale(W0,W1,W2);
+		//d3.select("svg2").append("p").text( "YnRn*scal: "+YnRn*scal);
+		//d3.select("svg2").append("p").text( "W0: "+W0+"W2: "+W2);
+		//d3.select("svg2").append("p").text( "Lamnda*nt: "+YnRn);
+		//d3.select("svg2").append("p").text( "YnRb du rand point: "+(nt*Lambda));
+		//d3.select("svg2").append("p").text( "nt*YnRn*XRn: "+(nt*YnRn*XRn));	
+		//d3.select("svg2").append("p").text( "nt*YnRn*YRn: "+(nt*YnRn*YRn));	
+		//d3.select("svg2").append("p").text( "Les anciennes coord de W sont: Wo = " +W[IT-1][0]+ "  " +"W1 =  "+W[IT-1][1]+"W2 =  "+W[IT-1][2]);	
 		//d3.select("svg2").append("p").text( "Les nouvelles coord de W sont: Wo = " +W0+ "  " +"W1 =  "+W1+"W2 =  "+W2);	
 		W.push([W0,W1,W2,0]);
 	}
 	
-	function Perceptron_Oneshot() {				
-		d3.select("#btn_perpIT").remove();		
+	function rescale(W0,W1,W2){
+		var newnorm = 0;
+		norm = Math.sqrt((W0*W0) + (W1*W1) + (W2*W2));
+		//d3.select("svg2").append("p").text( "W0: "+W0+"W1: "+W1+"W2: "+W2);
+		//d3.select("svg2").append("p").text( "norm: "+Math.sqrt((W0*W0) + (W1*W1) + (W2*W2)));
+		if(norm*norm > 1/Lambda){
+			newnorm = Math.sqrt(1/Lambda);
+			W0 = W0*newnorm/norm;
+			W1 = W1*newnorm/norm;
+			W2 = W2*newnorm/norm;
+		}
+		//d3.select("svg2").append("p").text( "W0: "+W0+"W1: "+W1+"W2: "+W2);
+		//d3.select("svg2").append("p").text( "newnorm: "+Math.sqrt((W0*W0) + (W1*W1) + (W2*W2)));
+		//d3.select("svg2").append("p").text( "newnorm: "+Math.sqrt((W0*W0) + (W1*W1) + (W2*W2))+"1/sqrt(Lambda): "+(1/Math.sqrt(Lambda)));
+		return W0,W1,W2;
+	
+	}
+	
+	function passage_rep_centrenorme(){
+	//fonction qui permet d'afficher en prenant comme origine du repere le barycentre des points du test set
+	sommedesx = 0;
+	sommedesy = 0;
+	for (var k=0;k<numPoints;k++){
+		sommedesx = sommedesx + Xn[k][0];
+		sommedesy = sommedesy + Xn[k][1];
+		}
+	coord_origine[0] = sommedesx/numPoints;
+	coord_origine[1] = sommedesy/numPoints;
+	for (var k=0;k<numPoints;k++){
+		Xn[k][0] = Xn[k][0] - coord_origine[0];
+		Xn[k][1] = Xn[k][1] - coord_origine[1];
+		}
+	
+	}
+	
+	
+	function Pegasos_Oneshot() {				
+		d3.select("#btn_perpIT").remove();	
+
+		passage_rep_centrenorme();
 		
-		for(var i=0;i<MaxIT;i++){
+	
+		d3.selectAll("svg")
+				.append("circle")
+				.attr("id","blkpt_origin")
+				.style("stroke", "black")
+				.style("fill", "black")
+				.style("opacity", 1)
+				.attr("r", 2)
+				.attr("cx",coord_origine[0])
+				.attr("cy",coord_origine[1]);
+		       			
+		
+		for(var i=1;i<MaxIT;i++){
 			IT = i;
-			drawperceptronline(W,"darkgreen", 0.5);
+			nt = 1/(Lambda*IT)
+			tabl1 = FindRandomPoint();		
+			XRd = tabl1[0];
+			YRd = tabl1[1];
+			YnRd = tabl1[2];
+						
+			CalculateAddnewW(XRd,YRd,YnRd,nt);
+						
+			drawperceptronline(W,"green", 0.5);
+			
+			
 			LabelisePoints();
+			//d3.select("svg2").append("p").text( "Yn_w:" +Yn_w);
 			Wcost = CalculateAddnewCost(Yn_w);
 			affichage_cout();
-			if(Wcost == 0){
-				d3.select("svg0").append("button")
-					.attr("id","btn0")
-					.attr("value","PLAY")
-					.text("Relancer le Perceptron")
-					.on("click", Lancer_Perceptron);			
-				var slope_finale = -W[IT][1]/W[IT][2];
-				var lineOffsetfinal = -W[IT][0]/W[IT][2];
-				slope_finale = slope_finale.toFixed(2);
-				lineOffsetfinal = lineOffsetfinal.toFixed(2);
-				drawperceptronline(W,"orange",4, 5);
-				d3.select("svg2").append("p").attr("id","p_fin1").text( "Le perceptron a trouvé une solution pour classer les points. C'est la droite de pente -"+slope_finale+" et d'offset Yo = "+ lineOffsetfinal).style("color","red");
-				d3.select("svg2").append("p").attr("id","p_fin2").text("Fin de l'apprentissage - La droite identifiée est en orange sur le graphique").style("color","red");	
-				d3.select("#p2").remove(); //Suppression paragraphe - Phase apprentissage
-				d3.select("#btn_perpOS").remove();
-				Prédiction();
-			}
-				
-			tabl1 = FindBadPoint(Yn_w);		
-			Xb = tabl1[0];
-			Yb = tabl1[1];
-			Ynbad = tabl1[2];
-			CalculateAddnewW(Xb,Yb,Ynbad);
-			Yn_w = [];
+			
+		
+			
+			Yn_w  = zeroFilledArray(Yn.length);
+
 			if(IT == MaxIT-1){				
-				d3.select("svg2").append("p").text( "Le perceptron a effectué "+(IT+1)+" itérations , la meilleure solution est la droite affichée en orange , elle est associée à un taux d'erreur de: "+Wcostmin.toFixed(5));
+				d3.select("svg2").append("p").attr("id","p_p42").text( "Pegasos a effectué "+(IT+1)+" itérations , la meilleure solution est la droite affichée en orange , elle est associée à un taux d'erreur de: "+Wcostmin.toFixed(5));
 				d3.select("#p2").remove(); //Suppression paragraphe - Phase apprentissage
-				//d3.select("svg2").append("p").text("la valeut de TabWcostmin[0][1]  est:  "+ TabWcostmin[0][1] +" et celle de est W[IT_int][2]"+ W_int[IT_int][2]);	
+				d3.select("svg2").append("p").attr("id","p_p43").text( "Paramètres du modèle:   Wo = " +TabWcostmin[0]+ "  " +"  W1 =  "+TabWcostmin[1]+"  W2 =  "+TabWcostmin[2]);			
 				drawperceptronline_finalErrorRate(TabWcostmin,"orange",4, 5); // il faut ajouter un argument dans cette fonction pour le cas ou le W choisi n'est identifiable par l'IT en cours comme ici où on revient dans le passé
 				d3.select("#p5").text("Taux d'erreur minimum: " + Wcostmin.toFixed(5) );
 				d3.select("svg0").append("button")
 					.attr("id","btn0")
 					.attr("value","PLAY")
-					.text("Relancer le Perceptron")
-					.on("click", Lancer_Perceptron);	
+					.text("Relancer Pegasos")
+					.on("click", Lancer_Pegasos);	
 				d3.select("#btn_perpOS").remove();
 				d3.select("#btn_perpOS").remove();
 				Prédiction();
@@ -586,8 +649,12 @@ svg12{
 	function lineAdjustToSVG(slopeW, lineoffsetW){
 
 		var tabl = [];
-		var x0 = -200;
-		var y0 = -200;
+		seuil_x_min = -coord_origine[0]
+		seuil_y_min = -coord_origine[1]
+		seuil_x_max = 400-coord_origine[0]
+		seuil_y_max = 400-coord_origine[1]
+		var x0 = seuil_x_min;
+		var y0 = seuil_y_min;
 		var x1 = 0;
 		var y1 = 0;
 		var x2 = 0;
@@ -597,39 +664,39 @@ svg12{
 
 
 		
-		x1 = -200;
+		x1 = seuil_x_min;
 		y1 = x1*slopeW + lineoffsetW;
 
-		if(y1<-200){
-			y1 = -200;
+		if(y1<seuil_y_min){
+			y1 = seuil_y_min;
 			x1 = (y1-lineoffsetW)/slopeW;
 
 			if(slopeW >= 0){				
-				if(x1 <= 200){
-					y2 = 200;
+				if(x1 <= seuil_x_max){
+					y2 = seuil_y_max;
 					x2 = (y2-lineoffsetW)/slopeW;
-					if (x2 <= 200){					
-						x3 = 200;
-						y3 = 200;
+					if (x2 <= seuil_x_max){					
+						x3 = seuil_x_max;
+						y3 = seuil_y_max;
 					}
 					else{ //x2 > 200
-						x2 = 200;
+						x2 = seuil_x_max;
 						y2 = x2*slopeW + lineoffsetW;
-						x3 = 200;
-						y3 = 200;							
+						x3 = seuil_x_max;
+						y3 = seuil_y_max;							
 					}
 				}
 				else{ //x1 > 200
 					// la droite ne passe pas dans le cadre
 					//relancer la fonction par un break dans ce cas
-					x0 = 200;
-					y0 = 200;
-					x1 = -200;
-					y1 = -200;
-					x2 = -200;
-					y2 = -200;
-					x3 = -200;
-					y3 = -200;				
+					x0 = seuil_x_max;
+					y0 = seuil_y_max;
+					x1 = seuil_x_min;
+					y1 = seuil_y_min;
+					x2 = seuil_x_min;
+					y2 = seuil_y_min;
+					x3 = seuil_x_min;
+					y3 = seuil_y_min;				
 				}
 				
 			}
@@ -637,94 +704,94 @@ svg12{
 				// la droite ne passe pas dans le cadre
 					
 				//relancer la fonction par un break dans ce cas
-				x0 = 200;
-				y0 = 200;				
-					x1 = -200;
-					y1 = -200;
-					x2 = -200;
-					y2 = -200;
-					x3 = -200;
-					y3 = -200;
+				x0 = seuil_x_max;
+				y0 = seuil_y_max;				
+					x1 = seuil_x_min;
+					y1 = seuil_y_min;
+					x2 = seuil_x_min;
+					y2 = seuil_y_min;
+					x3 = seuil_x_min;
+					y3 = seuil_y_min;
 				}							
 		}
-		if((y1>-200)&&(y1<200)){
+		if((y1>seuil_y_min)&&(y1<seuil_y_max)){
 			if(slopeW >= 0){
-				y2 = 200;
+				y2 = seuil_y_max;
 				x2 = (y2-lineoffsetW)/slopeW;
-				if (x2 <= 200){
-					x3 = 200;
-					y3 = 200;
+				if (x2 <= seuil_x_max){
+					x3 = seuil_x_max;
+					y3 = seuil_y_max;
 					
 				}
 				else{// x2 > 200
-					x2 = 200;
+					x2 = seuil_x_max;
 					y2 = x2*slopeW + lineoffsetW;
-					x3 = 200;
-					y3 = 200;
+					x3 = seuil_x_max;
+					y3 = seuil_y_max;
 									
 				}
 			}
 			else{
-				y2 = -200;
+				y2 = seuil_y_min;
 				x2 = (y2-lineoffsetW)/slopeW;
-				if (x2 <= 200){
-					x3 = 200;
-					y3 = -200;
+				if (x2 <= seuil_x_max){
+					x3 = seuil_x_max;
+					y3 = seuil_y_min;
 					
 				}
 				else{//x2>200
-					x2 = 200;
+					x2 = seuil_x_max;
 					y2 = x2*slopeW + lineoffsetW;
-					x3 = 200;
-					y3 = -200;
+					x3 = seuil_x_max;
+					y3 = seuil_y_min;
 									
 				}
 			}				
 		}		
 
-		if(y1>200){
-			y1 = 200;
+		if(y1>seuil_y_max){
+			y1 = seuil_y_max;
 			x1 = (y1-lineoffsetW)/slopeW;				
-			x0 = -200;
-			y0 = 200;
+			x0 = seuil_x_min;
+			y0 = seuil_y_max;
 			if(slopeW >= 0){
 				// la droite ne passe pas dans le cadre
-				x0 = 200;
-				y0 = 200;
-				y1 = 200;
-				x1 = 200;
-				x2 = 200;
-				y2 = 200;
-				x3 = 200;
-				y3 = 200;	
+				x0 = seuil_x_max;
+				y0 = seuil_y_max;
+				y1 = seuil_y_max;
+				x1 = seuil_x_max;
+				x2 = seuil_x_max;
+				y2 = seuil_y_max;
+				x3 = seuil_x_max;
+				y3 = seuil_y_max;	
 				//relancer la fonction par un break dans ce cas				
 			}
 			else{ // pente negative
-				if (x1 <= 200){
-					x2 = 200;
+				if (x1 <= seuil_x_max){
+					x2 = seuil_x_max;
 					y2 = x2*slopeW + lineoffsetW;
-					if (y2 <=-200){
-						y2 = -200;
+					if (y2 <=seuil_y_min){
+						y2 = seuil_y_min;
 						x2 = (y2-lineoffsetW)/slopeW;
-						x3 = 200;
-						y3 = -200;
+						x3 = seuil_x_max;
+						y3 = seuil_y_min;
 						
 					}
 					else{//y2>-200
-						x3 = 200;
-						y3 = -200;		
+						x3 = seuil_x_max;
+						y3 = seuil_y_min;		
 											
 					}
 				}
 				else{ //x1 > 200
-					x0 = 200;
-					y0 = 200;
-					y1 = 200;
-					x1 = 200;
-					x2 = 200;
-					y2 = 200;
-					x3 = 200;
-					y3 = 200;								
+					x0 = seuil_x_max;
+					y0 = seuil_y_max;
+					y1 = seuil_y_max;
+					x1 = seuil_x_max;
+					x2 = seuil_x_max;
+					y2 = seuil_y_max;
+					x3 = seuil_x_max;
+					y3 = seuil_y_max;								
 				}
 			}		
 		}
@@ -741,19 +808,24 @@ svg12{
 
 		
 		return tabl;
-	}
+	}	
+	
 	function drawperceptronline_finalErrorRate(TabWcostmin,linecolor,strokewidth, opacity){		
 		//d3.select("svg2").append("p").text("la valeut de TabWcostmin[1]  est:  "+ TabWcostmin[1] +" et celle de estTabWcostmin[2]"+ TabWcostmin[2]);		
 		slopeW = -1*(TabWcostmin[1]/TabWcostmin[2]); 
 		lineoffsetW = -1*(TabWcostmin[0]/TabWcostmin[2]); 
 		//W et x y sont ici exprimes dans un repère centré sur l'origine
+		// positionnement dans le repere dont l'origine est le centre du rectangle (svg)
+		// positionnement dans le repere dont l'orogine est le centre du rectangle (svg)
+		//lineoffsetW = coord_origine[1] + lineoffsetW;
+		//lineoffsetW = lineoffsetW + (coord_origine[0] * slopeW);
 		var tableau=[];
 		tableau = lineAdjustToSVG(slopeW,lineoffsetW);
 		var TabDataSet = [[tableau[2],tableau[3]], [tableau[4],tableau[5]],];
 		
 		var pathFunction = d3.svg.line()
-                          .x(function(d) { return (d[0]+200); })
-                          .y(function(d) { return (d[1]+200); });		  
+                          .x(function(d) { return (d[0]+coord_origine[0]); })
+                          .y(function(d) { return (d[1]+coord_origine[1]); });		  
 		
 
 		svg.append("path")
@@ -771,6 +843,11 @@ svg12{
 		//d3.select("svg2").append("p").text("la valeut de W[IT_int][1]  est:  "+ W_int[IT_int][1] +" et celle de est W[IT_int][2]"+ W_int[IT_int][2]);		
 		slopeW = -1*(W[IT][1]/W[IT][2]); 
 		lineoffsetW = -1*(W[IT][0]/W[IT][2]); 
+		// positionnement dans le repere dont l'orogine est le centre du rectangle (svg)
+		//lineoffsetW = coord_origine[1] + lineoffsetW;
+		//lineoffsetW = lineoffsetW + (coord_origine[0] * slopeW);
+		
+		//d3.select("svg2").append("p").text("lineoffsetW:  "+ lineoffsetW);
 		//W et x y sont ici exprimes dans un repère centré sur l'origine
 		
 		var tableau=[];
@@ -778,8 +855,8 @@ svg12{
 		var TabDataSet = [[tableau[2],tableau[3]], [tableau[4],tableau[5]],];
 		
 		var pathFunction = d3.svg.line()
-                          .x(function(d) { return (d[0]+200); })
-                          .y(function(d) { return (d[1]+200); })
+                          .x(function(d) { return (d[0]+coord_origine[0]); })
+                          .y(function(d) { return (d[1]+coord_origine[1]); })
 						  .interpolate("linear");	  		
 					 		
 		svg.append("path")
@@ -801,124 +878,139 @@ svg12{
 		return arr;
 	}
 	function Etiquetage() {
-            
-			d3.select("svg2").append("p").attr("id","p_p3").text("Les points forment deux groupes différents, les bleus (Label = -1) et les rouges (Label = +1))");	
-			lineoffsetXY = 200*(1-slope) + lineoffset;
-			for (var i = 0; i < numPoints; i++) {
-				Xn[i][0] = bubbleChart[i][0];
-				Xn[i][1] = bubbleChart[i][1];
-				Xn[i][2] = Math_sign( Xn[i][1] - slope*Xn[i][0] - lineoffsetXY) // On assigne a chaque point la valeur +1 si pour ce point y-aX-b >=0 et on assigne -1 si cette valeur est <0					
-			}
-	
-			
-			var tb2 = d3.selectAll("circle").data(Xn); // selection des cercles et lien avec le tableau de valeurs Xn
-			tb2.style("stroke", "black");
-			tb2.style("stroke-width", 1);
-			tb2.style("opacity",0.5);
-			tb2.style("fill", function(d) { 
-									if (d[2] >= 0){return "red";}
-									else{return "deepskyblue";}
-									
-								});
-			tb2.attr("r", 2);
-			tb2.attr("cx", function(d) { return d[0]; });
-			tb2.attr("cy", function(d) { return d[1]; });
-
-			
-			d3.selectAll("#btn3").remove();				
-			Ok_pour_perceptron = "OK";
-			Wo_init();
-			d3.select("#p1").remove();	//suppression du texte "Preparation du jeu de donneés"
-			d3.select("svg2").append("h4").attr("id","p6").text("Phase d'apprentissage").style("font-size", "17px");
+        
+		d3.select("svg2").append("p").attr("id","p_p3").text("Les points forment deux groupes différents, les bleus (Label = -1) et les rouges (Label = +1))");	
 		
+		for (var i = 0; i < Math.floor(numPoints/2); i++) {
+			Xn[i][0] = bubbleChart[i][0];
+			Xn[i][1] = bubbleChart[i][1];
+			Xn[i][2] = -1; 			
+		}
+	
+		
+		for (var i = Math.floor(numPoints/2); i < numPoints; i++) {
+			Xn[i][0] = bubbleChart[i][0];
+			Xn[i][1] = bubbleChart[i][1];
+			Xn[i][2] = 1 ;			
+		}
+		
+		
+		
+		var tb2 = d3.selectAll("circle").data(Xn); // selection des cercles et lien avec le tableau de valeurs Xn
+		tb2.style("stroke", "black");
+		tb2.style("stroke-width", 1);
+		tb2.style("opacity",0.5);
+		tb2.style("fill", function(d) { 
+								if (d[2] >= 0){return "red";}
+								else{return "deepskyblue";}
+								
+							});
+		tb2.attr("r", 2);
+		tb2.attr("cx", function(d) { return d[0]; });
+		tb2.attr("cy", function(d) { return d[1]; });
 
-			if(Ok_pour_perceptron == "OK"){
-				
-				d3.select("#p1").remove();				
-				d3.select("svg2").append("p").attr("id","p_a1").text( "Le Perceptron ne connaît pas la séparation entre les deux groupes de points, c'est ce qu'il doit trouver. Il ne connaît que l'emplacement des points (leurs coordonnées) et leur groupe d'appartenance (leur couleur). Il commence par prendre une droite au hasard et évalue le taux d'erreur obtenu avec cette droite. Le taux d'erreur correspond au rapport du nombre de points mal classés sur l'ensemble des points.");
-				d3.select("svg2").append("p").attr("id","p_a2").text( "Le perceptron choisit ensuite un point au hasard parmi les points qu'il a mal classés, ce point lui sert à s'orienter pour calculer une nouvelle droite. Au fur et à mesure des itérations les droites se rapprochent de la séparation entre les deux groupes de points et le taux d'erreur diminue."); 
-				d3.select("svg2").append("p").attr("id","p_a3").text( "A l'exécution pas à pas, le point mal classé est identifiable par un cercle gris.");
-				d3.select("svg2").append("p").attr("id","p_a4").text( "Dans certains cas, il se peut que le perceptron ne converge pas vers une solution à taux d'erreur nul mais oscille indéfiniment. On considèrera alors comme solution une droite pour laquelle le taux d'erreur est minimum. D'autre part vous pourrez constater que plus le nombre de points est élévé plus le nombre d'itérations est lui aussi élevé pour aboutir à la solution mais l'approche est plus précise ce qui fait qu'en cas de non convergence on obtient toutefois un taux d'erreur plus faible.");
-				d3.select("svg2").append("p").attr("id","p_a5").text( "L'option - Perceptron Automatique - lance l'apprentissage sans arrêt à chaque itération.");
+		
+		d3.selectAll("#btn3").remove();				
+		
+		//Wo_init();
+		d3.select("#p1").remove();	//suppression du texte "Preparation du jeu de donneés"
+		d3.select("svg2").append("h4").attr("id","p6").text("Phase d'apprentissage").style("font-size", "17px");
 
-				
-				d3.select("svg12").append("button")
-					.attr("id","btn_perpIT")
-					.attr("value","Perceptron pas a pas")
-					.text("Perceptron pas a pas");
+		d3.select("#p1").remove();				
+		d3.select("svg2").append("p").attr("id","p_a1").text( "Pegasos comme le Perceptron (Vu précédemment) ne connaît pas la séparation entre les deux groupes de points, c'est ce qu'il doit trouver. Il ne connaît que l'emplacement des points (leurs coordonnées) et leur groupe d'appartenance (leur couleur). Il commence par prendre une droite au hasard et évalue le taux d'erreur obtenu avec cette droite. Le taux d'erreur correspond au rapport du nombre de points mal classés sur l'ensemble des points.");
+		d3.select("svg2").append("p").attr("id","p_a2").text( "Pegasos choisit ensuite un point au hasard parmi les points du jeu d'entrainement, ce point lui sert à s'orienter pour calculer une nouvelle droite. Au fur et à mesure des itérations les droites se rapprochent de la séparation entre les deux groupes de points et le taux d'erreur diminue."); 
+		d3.select("svg2").append("p").attr("id","p_a3").text( "A l'exécution pas à pas, le point mal classé est identifiable par un cercle gris.");
+		d3.select("svg2").append("p").attr("id","p_a4").text( "Pegasos, contrairement au Perceptron ne va pas s'arrêter à la première droite qui effectue une séparation acceptable. Il va optimiser la solution en identifiant la droite la plus à égale distance des deux groupes de points. On parle aussi de maximiser la marge entre la droite et les points les plus proches de la droite dans chacun des groupes");
+		d3.select("svg2").append("p").attr("id","p_a5").text( "L'option - Pegasos Automatique - lance l'apprentissage sans arrêt à chaque itération.");
+
 					
-				d3.select("#btn_perpIT")
-					.on("click",function() {
-						if(this.value == "Perceptron pas a pas") {
-							this.value = "Clicker pour itérer";
-							d3.select(this).text("Clicker pour itérer");
-							Perceptron_Pasapas();
-						}
-						else {
-							Perceptron_Pasapas();
-						}		
-					});
+		d3.select("svg12").append("button")
+			.attr("id","btn_perpIT")
+			.attr("value","Pegasos pas a pas")
+			.text("Pegasos pas a pas");
 				
-				d3.select("svg12").append("button")
-					.attr("id","btn_perpOS")
-					.style("margin-left","8px")					
-					.attr("value","Perceptron Automatique")
-					.on("click", Perceptron_Oneshot)
-					.text("Perceptron Automatique");	
-
-				
+		d3.select("#btn_perpIT")
+			.on("click",function() {
+				if(this.value == "Pegasos pas a pas") {
+					this.value = "Clicker pour itérer";
+					d3.select(this).text("Clicker pour itérer");
+					Pegasos_Pasapas();
 				}
-        }
+				else {
+					Pegasos_Pasapas();
+				}		
+			});
+		d3.select("svg12").append("button")
+			.attr("id","btn_perpOS")
+			.style("margin-left","8px")					
+			.attr("value","Pegasos Automatique")
+			.on("click", Pegasos_Oneshot)
+			.text("Pegasos Automatique");	
+			
+	}
+        
 	function getRandomInt(min, max) {
             return Math.floor(Math.random() * (max - min + 1)) + min;
-        }
-	function validation_droite() {
-			d3.select("svg12").append("button")
-			.text("Valider la séparation")
-			.attr("id","btn12")
-			.on("click", removebutton_bnt1);	
-			
-		}
+    }
+	
 	function validation_point() {
 			d3.select("svg12").append("button")
 			.text("Valider les points")
 			.attr("id","btn22")
 			.on("click", removebutton_bnt2);
-		}
-	function removebutton_bnt1() {
-			d3.select("#btn1").remove();//on supprime le bouton change de droite
-			d3.select(this).remove();//on supprime le bouton de validation de la droite
-			d3.select("svg2").append("p").attr("id","p_p1").text("La droite choisie permettra de séparer les points en deux groupes distincts. ").style("font-family","Arial");	
-			Etat_droite = "valide";	
-			if(Etat_droite == "valide"){	
-				if(Etat_points == "valide"){
-					d3.select("svg1").append("button")
-						.attr("id","btn3")
-						.on("click", Etiquetage)
-						.text("Lancer l'étiquetage des points");
-				}	
-			}				
-		}
+	}
+
 	function removebutton_bnt2() {
-			d3.select("#btn2").remove();//on supprime le bouton change de points
-			d3.select(this).remove();//on supprime le bouton de validation de points
-			d3.select("svg2").append("p").attr("id","p_p2").text( "Les points sont choisis au hasard, ils représentent les enregistrements connus qui vont servir à l'apprentissage du Perceptron. ");	
-			Etat_points = "valide";
+		d3.select("#btn2").remove();//on supprime le bouton change de points
+		d3.select(this).remove();//on supprime le bouton de validation de points
+		d3.select("svg2").append("p").attr("id","p_p2").text( "Les points sont choisis au hasard mais dans une distribution normale, c'est ce qui permet de les regrouper en deux paquets plus ou moins distincts, ils représentent les enregistrements connus qui vont servir à l'apprentissage de Pegasos. ");	
+		Etat_points = "valide";
 				
-			if(Etat_droite == "valide"){	
-				if(Etat_points == "valide"){
-					d3.select("svg1").append("button")
-						.attr("id","btn3")
-						.on("click", Etiquetage)
-						.text("Lancer l'étiquetage des points");
-				}	
-			}
+				
+		if(Etat_points == "valide"){
+			d3.select("svg1").append("button")
+				.attr("id","btn3")
+				.on("click", Etiquetage)
+				.text("Lancer l'étiquetage des points");
 		}	
+			
+	}	
+	// from http://bl.ocks.org/mbostock/4349187
+	// Sample from a normal distribution with mean 0, stddev 1.
+	function normal() {
+		var x = 0,
+        y = 0,
+        rds, c;
+		do {
+			x = Math.random() * 2 - 1;
+			y = Math.random() * 2 - 1;
+			rds = x * x + y * y;
+		} while (rds == 0 || rds > 1);
+		c = Math.sqrt(-2 * Math.log(rds) / rds); // Box-Muller transform
+		return x * c; // throw away extra sample y * c
+	}	
+
 	var runCircles = function() {
+	
 		d3.selectAll("circle").remove();
-		bubbleChart = [];
-		for (var i = 0; i < numPoints; i++) {
-			bubbleChart.push([Math.floor(Math.random() * 400), Math.floor( Math.random() * 400)]);
+		bubbleChart = [];		
+		
+		CentreBx = getRandomInt(100,310);	
+		CentreAx = getRandomInt(0,180);
+		CentreAy = getRandomInt(0,180);
+		CentreBy = getRandomInt(0,350);
+
+		for (var i = 0; i < Math.floor(numPoints/2); i++) {
+						
+			bubbleChart.push([Math.floor(CentreAx + 30*normal()), Math.floor( CentreAy + 50*normal())]);
+		}	
+			
+		for (var i = Math.floor(numPoints/2); i < numPoints; i++) {
+			do {
+			temp_Bx = Math.floor(CentreBx + 30*normal())
+			}while (temp_Bx>400)
+			bubbleChart.push([temp_Bx, Math.floor( CentreBy + 60*normal())]);
+			
 		}	
 	
 		var tb = svg.selectAll("circle").data(bubbleChart);	   
@@ -934,26 +1026,7 @@ svg12{
 		tb.exit().remove();	 
 	};
     //Draw a line
-	var runLine = function() {
-		d3.selectAll("path").remove();
-		slope = getRandomInt(-300,+300)/100; 
-		lineoffset = getRandomInt(-150,150);
-		var tableau=[];
-		tableau = lineAdjustToSVG(slope,lineoffset );
-		var datasetpoints2 = [[tableau[0],tableau[1]], [tableau[2],tableau[3]], [tableau[4],tableau[5]], [tableau[6],tableau[7]],];
-	
-		var area = d3.svg.area()
-			.x(function(d) { return d[0]+200; })
-			.y0(0)
-			.y1(function(d) { return d[1]+200; });
-			
-		svg.append("path")
-			.datum(datasetpoints2)
-			.attr("class", "area")
-			.attr("d", area);
 
-	};	 
-	
 			
 			
 	function add(){   
@@ -1058,8 +1131,10 @@ svg12{
 		
 	}
 	
-	function Lancer_Perceptron(){
+	function Lancer_Pegasos(){
 		//d3.selectAll("p").remove();
+		d3.select("#p_p42").remove();
+		d3.select("#p_p43").remove();
 		d3.selectAll("rect").remove();
 		d3.selectAll("text").remove();
 		d3.selectAll("button").remove();
@@ -1112,7 +1187,7 @@ svg12{
 	
 	
 		var node = document.createElement('div'); 
-		node.innerHTML = '<br /><label for="nValue" style="display: inline-block; width:225px; text-align: left; font-size: 13px; font-family: Arial; margin-left: 4px"> Choisir le nombre de points:    </label><input type="number" min="0" max="1000" step="10" value="50" id="nValue"><input value="valider" type="button"  onClick="add()" id="buttonChoixPoints">';	
+		node.innerHTML = '<br /><label for="nValue" style="display: inline-block; width:225px; text-align: left; font-size: 13px; font-family: Arial; margin-left: 4px"> Choisir le nombre de points:    </label><input type="number" min="0" max="1000" step="10" value="500" id="nValue"><input value="valider" type="button"  onClick="add()" id="buttonChoixPoints">';	
 		document.getElementById('lancement').appendChild(node);
 	
 		//Reinitialiser toutes les variables globales
@@ -1121,23 +1196,22 @@ svg12{
 		P = [];		
 		slope = 0;
 		lineoffset = 0;
-		Etat_droite = "Choix_en_cours";
+		
 		Etat_points = "Choix_en_cours";
 		valide = "valide";
 		test = 0;
 		Ok_pour_perceptron = "KO";
 		W = [[]];
-		W[0] =  [Math.random(), Math.random(), Math.random(),0];
 		slopeW = 0;
 		lineoffsetW = 0;
 		W[0] =  [0, 0, 0,0];
 		IT = 0;
-		Xb = 0;
-		Yb = 0;
-		Ynbad = 0;
+		XRn = 0;
+		YRn = 0;
+		YnRn = 0;
 		Yn_w = [];
 		Wcost = 0;
-		Wcostmin = 1000;
+		Wcostmin = 5000;
 		var TabWcostmin = [];
 		tabl1=[];
 		paddingy = 30;
@@ -1156,6 +1230,8 @@ svg12{
 		Point_y = 0;
 		blackpoint_ordonnee = "KO";
 		blackpoint_abscisse  = "KO";
+		Lambda = 0.1;
+		coord_origine  = [];
 		
 		d3.selectAll("svg").append("rect")
 			.style("fill", "Plum")
@@ -1163,25 +1239,7 @@ svg12{
 			.attr("stroke", "black")
 			.attr("stroke-width", 1)
 			.attr("width", 400)
-			.attr("height", 400);
-
-		d3.select("svg1").append("button")
-				.attr("id","btn1")
-				.attr("value","Choisir une séparation")
-				.text("Choisir une separation");
-						
-		d3.select("#btn1")
-			.on("click",function() {
-				if(this.value == "Choisir une séparation") {
-					this.value = "Changer de séparation";
-					d3.select(this).text("Changer de séparation");
-					runLine();
-					validation_droite();	
-				}
-				else {
-					runLine();
-				}		
-		});
+			.attr("height", 400);		
 	
 		d3.select("#btn2")
 			.on("click",function() {
@@ -1197,19 +1255,20 @@ svg12{
 					runCircles();
 				}
 		});
+		
 		d3.select("svg2").append("h4").attr("id","p6").text("Phase de préparation des données").style("font-size", "17px");		
-		d3.select("svg2").append("p").attr("id","p_p0").style("font-family","Arial").style("font-size","13px").text(" Le Perceptron apprend à partir d'un historique de données connues, c'est à dire des enregistrements dont il connait le groupe d'appartenance. Dans le cas par exemple d'attribution de crédit, l'enregistrement correspond à un client demandeur de crédit. Ce client est identifiable par un certain nombre d'informations comme l'âge, le niveau de diplôme, le statut professionnel ou le lieu d'habitation. C'est à partir de ces caractéristiques que l'on va pouvoir identifier les groupes d'individus, chaque groupe étant plus ou moins avantageux pour l'attributeur du crédit. Pour simplifier les choses nous considèrerons seulement deux caractéristiques par exemple, l'âge et le salaire et nous nous limiterons à deux groupes (favorable ou non favorable).");	
+		d3.select("svg2").append("p").attr("id","p_p0").style("font-family","Arial").style("font-size","13px").text(" Le Pegasos apprend à partir d'un historique de données connues, c'est à dire des enregistrements dont il connait le groupe d'appartenance. Dans le cas par exemple d'attribution de crédit, l'enregistrement correspond à un client demandeur de crédit. Ce client est identifiable par un certain nombre d'informations comme l'âge, le niveau de diplôme, le statut professionnel ou le lieu d'habitation. C'est à partir de ces caractéristiques que l'on va pouvoir identifier les groupes d'individus, chaque groupe étant plus ou moins avantageux pour l'attributeur du crédit. Pour simplifier les choses nous considèrerons seulement deux caractéristiques par exemple, l'âge et le salaire et nous nous limiterons à deux groupes (favorable ou non favorable).");	
 		d3.select("svg2").append("p").attr("id","p_p01").style("font-family","Arial").style("font-size","13px").text(" L'interface ci-dessous vous permet de créer vous même le jeu de données d'apprentissage. Les clients sont symbolisés par des points affichés dans un espace à deux dimensions. Les coordonnées de ces points sont les caractérisques du client et la couleur du point est son statut favorable (en bleu) et non favorable (en rouge).");	
 		d3.select("svg2").append("p").attr("id","p_p02").style("font-family","Arial").style("font-size","13px").text(" Cette simplification permet de visualiser graphiquement le fonctionnement de l'algorithme, mais dans les cas réels les enregistrements sont identifiés par des milliers voire des centaines de milliers de caractéristiques, on parle d'espace de dimension n.");	
 		d3.select("svg2").append("p").attr("id","p_p03").style("font-family","Arial").style("font-size","13px").text(" Pour une exécution pas à pas de l'algorithme, choisir plutôt entre 20 et 200 points, au delà la durée de convergence va commencer à être longue.");	
 		d3.select("svg2").append("p").attr("id","p_p04").style("font-family","Arial").style("font-size","13px").text(" Avec l'exécution automatique de l'algorithme, choisir au maximum jusqu'à 4000 points, au delà le graphique commence à être trop chargé et moins lisible.");	
-
-		}
+		
+	}
 
 	function Prédiction(){
 	
 		d3.select('#zone2').append("h4").text("Phase de prédiction").style("font-size", "17px");					
-		d3.select('#zone2').append("p").attr("id","p_f1").style("font-family","Arial").style("font-size","13px").text("Lorsque vous saisissez les coordonnées d'un nouveau point, le perceptron est capable d'identifier son groupe d'appartenance.");	
+		d3.select('#zone2').append("p").attr("id","p_f1").style("font-family","Arial").style("font-size","13px").text("Lorsque vous saisissez les coordonnées d'un nouveau point, Pegasos est capable d'identifier son groupe d'appartenance.");	
 		d3.select('#zone2').append("p").attr("id","p_f2").style("font-family","Arial").style("font-size","13px").text("L'axe des abscisses est de la gauche vers la droite sur le graphique.");	
 		d3.select('#zone2').append("p").attr("id","p_f3").style("font-family","Arial").style("font-size","13px").text("L'axe des ordonnées est du haut vers le bas sur le graphique.");
 			
@@ -1223,17 +1282,17 @@ svg12{
 		d3.select('#zone2').append("text").attr("id","p_t6").style("font-family","Arial").style("font-size","13px").text(", le point que vous avez choisi apparaît en noir sur le graphique. N'hésitez pas à faire plusieurs essais.");		
 
 		
-		d3.select('#zone3').append("p").attr("id","p_f5").style("font-family","Arial").style("font-size","13px").text("Cet exercice peut sembler trivial en deux dimensions mais il faut savoir que dans les cas réels les points ont bien plus que deux ou trois coordonnées, les enregistrements peuvent avoir des milliers d'attributs. Or le Perceptron s'adapte très facilement aux espaces de dimension n, n pouvant être très grand. Le sous espace de séparation n'est alors plus une droite mais un hyperplan de dimension n-1. Ce qui n'est plus représentable pour l'homme mais n'est pas plus compliqué pour l'algorithme.");		
+		d3.select('#zone3').append("p").attr("id","p_f5").style("font-family","Arial").style("font-size","13px").text("Cet exercice peut sembler trivial en deux dimensions mais il faut savoir que dans les cas réels les points ont bien plus que deux ou trois coordonnées, les enregistrements peuvent avoir des milliers d'attributs. Or Pegasos s'adapte très facilement aux espaces de dimension n, n pouvant être très grand. Le sous espace de séparation n'est alors plus une droite mais un hyperplan de dimension n-1. Ce qui n'est plus représentable pour l'homme mais n'est pas plus compliqué pour l'algorithme.");		
 	
-		d3.select('#zone3').append("h4").text("Les points forts et les points faibles du Perceptron").style("font-size", "17px");					
+		d3.select('#zone3').append("h4").text("Les points forts et les points faibles de Pegasos").style("font-size", "17px");					
 		d3.select('#zone3').append("p").attr("id","p31").style("font-family","Arial").style("font-size","13px").text("Une première remarque valable pour tout algorithme d'apprentissage automatique: L'algorithme ne peut révéler une structure dans des données que s'il en existe une, cela suppose une organisation intrinsèque des données, ce qui n'est pas toujours le cas.");	
-		d3.select('#zone3').append("p").attr("id","p32").style("font-family","Arial").style("font-size","13px").text("Le perceptron a pour point fort sa simplicité, il permet d'identifier rapidement une organisation dans les données et peut s'implémenter par ajout de nouveaux enregistrements au fil de l'eau, sa performance s'améliorera alors au fur et à mesure de l'acquisition des données. On réalise bien sur le graphique qu'avec peu de points la séparation identifiée ne s'approche que grossièrement de la séparation réelle entre les points.");	
-		d3.select('#zone3').append("p").attr("id","p33").style("font-family","Arial").style("font-size","13px").text("Le perceptron a pour point faible sa simplicité aussi! Lorsque l'espace de séparation des données n'est pas linéaire (hyperplan), on utilisera des algorithmes plus sophistiqués qui sauront mieux épouser la forme des séparations entre les données.");
-		d3.select('#zone3').append("p").attr("id","p34").style("font-family","Arial").style("font-size","13px").text("Pour optimiser la solution dans l'espace de séparation des données, il existe des algorithmes plus sophistiqués comme le SVM (Machine à Vecteur de Support).");	
-		d3.select('#zone3').append("p").attr("id","p35").style("font-family","Arial").style("font-size","13px").text("Enfin, le Perceptron est un algorithme d'apprentissage supervisé, c'est à dire qu'il a besoin d'un historique de données labelisées pour apprendre. Ce qui n'est pas toujours facile à obtenir quand ce n'est pas impossible. Dans ce cas, il existe là aussi d'autres outils dits d'apprentissage non supervisés.");
-		}
+		d3.select('#zone3').append("p").attr("id","p32").style("font-family","Arial").style("font-size","13px").text("Pegasos a pour point fort sa simplicité, il permet d'identifier rapidement une organisation dans les données et peut s'implémenter par ajout de nouveaux enregistrements au fil de l'eau(on parle l'algorythme 'on line'), sa performance s'améliorera alors au fur et à mesure de l'acquisition des données.");	
+		d3.select('#zone3').append("p").attr("id","p33").style("font-family","Arial").style("font-size","13px").text("Il existe des methodes plus précises dans le calcul des SVM, qui ont l'avantage de donner plus précise et même exacte quand les points sont linéairement séparables. Cependant ces méthodes ne sont pas applicables pour le traitemeent des données de masse. Pegasos approche la solution de façon itérative et approximative par le calcul de subgradient de la fonction de de coût.");	
+		d3.select('#zone3').append("p").attr("id","p34").style("font-family","Arial").style("font-size","13px").text("Pegasos a pour point faible sa simplicité aussi! Lorsque l'espace de séparation des données n'est pas linéaire (hyperplan), on utilisera des algorithmes plus sophistiqués qui sauront mieux épouser la forme des séparations entre les données.");
+		d3.select('#zone3').append("p").attr("id","p35").style("font-family","Arial").style("font-size","13px").text("Enfin, Pegasos est un algorithme d'apprentissage supervisé, c'est à dire qu'il a besoin d'un historique de données labelisées pour apprendre. Ce qui n'est pas toujours facile à obtenir quand ce n'est pas impossible. Dans ce cas, il existe là aussi d'autres outils dits d'apprentissage non supervisés.");
+	}
 	
-	Lancer_Perceptron();
+	Lancer_Pegasos();
 		
     </script>
 	
