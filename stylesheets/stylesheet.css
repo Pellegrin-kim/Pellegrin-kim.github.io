@@ -447,16 +447,19 @@ a:hover {
   color: #2268b2;
 }
 
+
 header {
-  padding-top: 40px;
-  padding-bottom: 40px;
+  position: fixed;
+  width:1900px;
+  padding-top: 10px;
+  padding-bottom: 10px;
   font-family: 'Architects Daughter', 'Helvetica Neue', Helvetica, Arial, serif;
   background: #2e7bcf url(../images/header-bg.jpg) 0 0 repeat-x;
   border-bottom: solid 1px #275da1;
 }
 
 header h1 {
-  width: 540px;
+  width: 800px;
   margin-top: 0;
   margin-bottom: 0.2em;
   font-size: 56px;
@@ -467,7 +470,7 @@ header h1 {
 }
 
 header h2 {
-  width: 540px;
+  width: 800px;
   margin-top: 0;
   margin-bottom: 0;
   font-size: 26px;
@@ -477,10 +480,22 @@ header h2 {
   letter-spacing: 0;
 }
 
+iframe {
+    position: adjust;
+	margin-top  : 100px;
+	margin-right : 500px;
+    width: 1550px;
+	margin: 0px;
+
+
+}
+
 .inner {
-  position: relative;
-  width: 1200px;
-  margin: 0 auto;
+  position: right;
+  width: 10px;
+  margin: 15;
+  padding-left: 600px;
+  padding-right: 50px;
 }
 
 #content-wrapper {
@@ -490,11 +505,26 @@ header h2 {
 
 #main-content {
   float: left;
-  width: 800px;
+  width: 2000px;
+  padding-left: 400px;
+  padding-top: 100px;
 }
 
 #main-content img {
   max-width: 100%;
+}
+
+
+#menukpe  {
+position: fixed;
+margin-top      : 110px;
+border-left: solid 20px #fff;
+float:left;
+width:300px;
+padding-left: 40px;
+padding-top: 40px;
+height: 2800px;
+background-color: Highlight;
 }
 
 aside#sidebar {
@@ -532,8 +562,8 @@ a.button small {
 }
 header a.button {
   position: absolute;
-  top: 0;
-  right: 0;
+  top: 10px;
+  right:10px;
   background: transparent url(../images/github-button.png) 0 0 no-repeat;
 }
 aside a.button {
@@ -791,7 +821,7 @@ footer a:hover {
     font-size: 30px;
   }
   #main-content {
-    width: 490px;
+    width: 500px;
   }
   #main-content h1:before,
   #main-content h2:before,

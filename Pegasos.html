@@ -12,7 +12,7 @@
 
 #introduction {
   position: relative;
-  width: 900px;
+  width: 1500px;
   margin-bottom = 40px;
 
 }
@@ -40,6 +40,7 @@
 #introduction h4 {
   margin-top:3em;
   margin-bottom: 1.5em;
+    margin-left: 14px;
   font-family: 'Architects Daughter', 'Helvetica Neue', Helvetica, Arial, serif;
   font-size: 15px;
   font-weight: bold;
@@ -49,7 +50,7 @@
 #introduction p {
   margin-top:0.5em;
   margin-bottom: 0.5em;
-  margin-left: 4px;
+  margin-left: 14px;
   font-family: 'Architects Daughter', 'Helvetica Neue', Helvetica, Arial, serif;
   font-size: 13px;
   color: Black;
@@ -58,25 +59,28 @@
 }
 #lancement {
   position: relative;
-  font-family: 'Architects Daughter', 'Helvetica Neue', Helvetica, Arial, serif;
-  font-size: 13px;
-  width: 900px;
+  width: 1300px;
   margin-top= 40px;
   margin-bottom = 10px;
 }
 #lancement h4 {
   margin-top:3em;
   margin-bottom: 1.5em;
+    margin-left: 14px;
   font-family: 'Architects Daughter', 'Helvetica Neue', Helvetica, Arial, serif;
   font-size: 15px;
   font-weight: bold;
   color: #474747;
   text-indent: 3px;
 }
+
+#lancement h1 {
+	padding: 0px 0px 30px 0px;
+}
 #lancement p {
   margin-top:1em;
   margin-bottom: 0.5em;
-  margin-left: 4px;
+  margin-left: 14px;
   font-family: 'Architects Daughter', 'Helvetica Neue', Helvetica, Arial, serif;
   font-size: 13px;
   color: Black;
@@ -97,12 +101,13 @@
 
 #zone1 {
   position: relative;
-  width: 900px;
+  width: 1500px;
   height: 60px;
 }
 #zone1 h4 {
   margin-top:3em;
   margin-bottom: 1.5em;
+    margin-left: 14px;
   font-family: 'Architects Daughter', 'Helvetica Neue', Helvetica, Arial, serif;
   font-size: 15px;
   font-weight: bold;
@@ -112,7 +117,7 @@
 #zone1 p {
   margin-top:0.5em;
   margin-bottom: 0.5em;
-  margin-left: 4px;
+  margin-left: 14px;
   font-family: 'Architects Daughter', 'Helvetica Neue', Helvetica, Arial, serif;
   font-size: 13px;
   color: Black;
@@ -121,12 +126,13 @@
 }
 #zone12 {
   position: relative;
-  width: 900px;
+  width: 1500px;
   height: 30px;
 }
 #zone12 h4 {
   margin-top:1em;
   margin-bottom: 2em;
+    margin-left: 14px;
   font-family: 'Architects Daughter', 'Helvetica Neue', Helvetica, Arial, serif;
   font-size: 15px;
   font-weight: bold;
@@ -136,7 +142,7 @@
 #zone12 p {
   margin-top:0.5em;
   margin-bottom: 0.5em;
-  margin-left: 4px;
+  margin-left: 14px;
   font-family: 'Architects Daughter', 'Helvetica Neue', Helvetica, Arial, serif;
   font-size: 13px;
   color: Black;
@@ -147,21 +153,23 @@ svg12{
   opacity: 1;
   width: 900px;
   height: 20px;
+    margin-left: 14px;
 } 
 #zone13 {
   position: relative;
-  width: 900px;
+  width: 1500px;
   height: 30px;
 }
 #viz {
   position: relative;
   margin-top = 20px;
+    margin-left: 14px;
   width: 1160px;
   height: 400px;
 }
 #zone2 {
   position: relative;
-  width: 900px;
+  width: 1500px;
   height: 260px;
 }
 #zone2 h4 {
@@ -171,12 +179,12 @@ svg12{
   font-size: 15px;
   font-weight: bold;
   color: #474747;
-  text-indent: 3px;
+  text-indent: 14px;
 }
 #zone2 p,text {
   margin-top:0.5em;
   margin-bottom: 0.5em;
-  margin-left: 4px;
+  margin-left: 14px;
   font-family: 'Architects Daughter', 'Helvetica Neue', Helvetica, Arial, serif;
   font-size: 13px;
   color: Black;
@@ -186,7 +194,7 @@ svg12{
 
 #zone3 {
   position: relative;
-  width: 900px;
+  width: 1300px;
   height: 800px;
 }
 #zone3 h4 {
@@ -196,12 +204,12 @@ svg12{
   font-size: 15px;
   font-weight: bold;
   color: #474747;
-  text-indent: 3px;
+  text-indent: 14px;
 }
 #zone3 p,text {
   margin-top:0.5em;
   margin-bottom: 0.5em;
-  margin-left: 4px;
+  margin-left: 14px;
   font-family: 'Architects Daughter', 'Helvetica Neue', Helvetica, Arial, serif;
   font-size: 13px;
   color: Black;
@@ -214,10 +222,15 @@ svg12{
 <div id="introduction"></div>
 <div id="pad"></div>
 <div id="lancement">
-<p></p> Les Machines à Vecteurs de Support, appelées SVM permettent comme le Perceptron d'identifier la séparation entre deux groupes de points. Le SVM apporte cependant des possibilités et des optimisations supplémentaires:
-<p></p> Tout d'abord avec le SVM la séparation identifiée est mieux optimisée car elle est unique et correspond à la zone équidistante et la plus éloignée possible des deux groupes. On comprend que de cette façon lorsque l'on quitte le jeu de données d'entrainement pour tester l'algorithme avec de nouvelles données, on a plus de chance d'obtenir un meilleur taux de classifications exactes. 
-<p></p> Le SVM permet aussi de séparer des groupes de données non linéairement séparables (groupe inclu dans dans un autre groupe). Ce cas n'est pas traité dans cette page, il fait l'objet d'un paragraphe isolé ("SVM with kernel-trick")
-<p></p> Le SVM peut tolérer quelques points mal classés pour un meilleur résultat global, car là aussi dans les cas réels les données ne sont pas toujours parfaitement séparables. On parle alors de "Soft margin SVM".
+<h1 align="center" > PRESENTATION DE PEGASOS  </h1>
+<p><br /><br />Les Machines à Vecteurs de Support, appelées SVM permettent comme le Perceptron d'identifier la séparation entre deux groupes de points. Le SVM apporte cependant des possibilités et des optimisations supplémentaires:
+</p> 
+<p>Tout d'abord avec le SVM la séparation identifiée est mieux optimisée car elle est unique et correspond à la zone équidistante et la plus éloignée possible des deux groupes. On comprend que de cette façon lorsque l'on quitte le jeu de données d'entrainement pour tester l'algorithme avec de nouvelles données, on a plus de chance d'obtenir un meilleur taux de classifications exactes. 
+</p> 
+<p>Le SVM permet aussi de séparer des groupes de données non linéairement séparables (groupe inclu dans dans un autre groupe). Ce cas n'est pas traité dans cette page, il fait l'objet d'un paragraphe isolé ("SVM with kernel-trick")
+</p> 
+<p>Le SVM peut tolérer quelques points mal classés pour un meilleur résultat global, car là aussi dans les cas réels les données ne sont pas toujours parfaitement séparables. On parle alors de "Soft margin SVM".
+</p> 
 </div>
 <div id="pad2"><br /><br /></div>
 <div id="zone1">	
@@ -1187,7 +1200,7 @@ svg12{
 	
 	
 		var node = document.createElement('div'); 
-		node.innerHTML = '<br /><label for="nValue" style="display: inline-block; width:225px; text-align: left; font-size: 13px; font-family: Arial; margin-left: 4px"> Choisir le nombre de points:    </label><input type="number" min="0" max="1000" step="10" value="500" id="nValue"><input value="valider" type="button"  onClick="add()" id="buttonChoixPoints">';	
+		node.innerHTML = '<br /><label for="nValue" style="display: inline-block; width:225px; text-align: left; font-size: 13px; font-family: Arial; margin-left: 14px"> Choisir le nombre de points:    </label><input type="number" min="0" max="1000" step="10" value="500" id="nValue"><input value="valider" type="button"  onClick="add()" id="buttonChoixPoints">';	
 		document.getElementById('lancement').appendChild(node);
 	
 		//Reinitialiser toutes les variables globales
@@ -1273,8 +1286,8 @@ svg12{
 		d3.select('#zone2').append("p").attr("id","p_f3").style("font-family","Arial").style("font-size","13px").text("L'axe des ordonnées est du haut vers le bas sur le graphique.");
 			
 		var node2 = document.createElement('div'); 
-		node2.innerHTML = '<br /><label for="abscisse" style="display: inline-block; width:250px; text-align: left; font-size: 13px; font-family: Arial; margin-left: 4px">  Choisir une abscisse entre 0 et 400: </label><input type="number" min="0" max="400" step="10" value="50" id="abscisse"><input value="valider" type="button"  onClick="add_abscisse()" id="buttonChoixAbscisse">'+
-		'<br /><br /><label for="ordonnée" style="display: inline-block; width:250px; text-align: left; font-size: 13px; font-family: Arial; margin-left: 4px">  Choisir une ordonnée entre 0 et 400: </label><input type="number" min="0" max="400" step="10" value="50" id="ordonnée"><input value="valider" type="button"  onClick="add_ordonnée()" id="buttonChoixOrdonnée"><br /><br />';	
+		node2.innerHTML = '<br /><label for="abscisse" style="display: inline-block; width:250px; text-align: left; font-size: 13px; font-family: Arial; margin-left: 14px">  Choisir une abscisse entre 0 et 400: </label><input type="number" min="0" max="400" step="10" value="50" id="abscisse"><input value="valider" type="button"  onClick="add_abscisse()" id="buttonChoixAbscisse">'+
+		'<br /><br /><label for="ordonnée" style="display: inline-block; width:250px; text-align: left; font-size: 13px; font-family: Arial; margin-left: 14px">  Choisir une ordonnée entre 0 et 400: </label><input type="number" min="0" max="400" step="10" value="50" id="ordonnée"><input value="valider" type="button"  onClick="add_ordonnée()" id="buttonChoixOrdonnée"><br /><br />';	
 		document.getElementById('zone2').appendChild(node2);
 		
 		d3.select('#zone2').append("text").attr("id","p_t4").style("font-family","Arial").style("font-size","13px").text("Lorsque vous avez validé ");		
